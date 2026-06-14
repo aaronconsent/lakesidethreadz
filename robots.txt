@@ -1,7 +1,49 @@
-# Lakeside Ink & Threadz
+# Lakeside Ink & Threadz — robots.txt
+# Custom embroidery, DTF printing, and business branding in Onalaska, TX.
+
 User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /auth/
+
+# Search engines — explicit allow
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+User-agent: DuckDuckBot
+Allow: /
+User-agent: Applebot
+Allow: /
+
+# AI / Answer-engine crawlers — explicit allow for AEO discoverability
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: YouBot
+Allow: /
+User-agent: Amazonbot
+Allow: /
+
+# Social link unfurlers
+User-agent: facebookexternalhit
+Allow: /
+User-agent: Twitterbot
+Allow: /
+User-agent: LinkedInBot
+Allow: /
 
 Sitemap: https://lakesidethreadz.com/sitemap.xml
