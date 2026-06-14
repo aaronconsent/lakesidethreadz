@@ -1,0 +1,20 @@
+{
+  // Cloudflare Worker config for lakesidethreadz.com
+  // Static assets served from the repo root; worker handles /api/*.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lakesidethreadz",
+  "main": "worker.js",
+  "compatibility_date": "2026-05-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page"
+  },
+  "vars": {
+    "CONTACT_TO": "info@lakesidethreadz.com",
+    "CONTACT_FROM": "noreply@lakesidethreadz.com"
+  }
+  // Set RESEND_API_KEY as a Secret in the Worker dashboard.
+  // Optionally set CONTACT_CC (comma-separated) in the dashboard vars.
+}

@@ -1,0 +1,9 @@
+/* mirror.css — post-strip nav + safety overrides */
+/* The captured Tailwind has dropdown items inline but visually hidden via React state.
+   We force them visible-on-toggle through a .mirror-open class injected by mirror.js. */
+[data-dropdown-panel]{display:none}
+[data-dropdown-panel].mirror-open{display:block}
+[data-mobile-panel]{display:none}
+[data-mobile-panel].mirror-open{display:block}
+/* hide the Mocha-injected watermark if any sneaks back via cached JS */
+[data-mocha-watermark]{display:none!important}

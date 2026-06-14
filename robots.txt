@@ -1,0 +1,7 @@
+# Lakeside Ink & Threadz
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /auth/
+
+Sitemap: https://lakesidethreadz.com/sitemap.xml
