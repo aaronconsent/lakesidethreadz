@@ -12,7 +12,7 @@
     "not_found_handling": "404-page"
   },
   "vars": {
-    "CONTACT_TO": "info@lakesidethreadz.com",
+    "CONTACT_TO": "hello@lakesidethreadz.com",
     "CONTACT_FROM": "noreply@lakesidethreadz.com"
   }
   // Set RESEND_API_KEY as a Secret in the Worker dashboard.
