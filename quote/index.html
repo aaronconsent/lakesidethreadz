@@ -156,11 +156,11 @@
           status.style.background='#dcfce7';status.style.color='#14532d';status.style.display='block';
           f.reset();
         }else{
-          status.textContent=(j.error||'Something went wrong. Please email us at info@lakesidethreadz.com.');
+          status.textContent=(j.error||'Something went wrong. Please call (346) 988-5449 or email info@lakesidethreadz.com.');
           status.style.background='#fee2e2';status.style.color='#7f1d1d';status.style.display='block';
         }
       }catch(err){
-        status.textContent='Network error. Please email us at info@lakesidethreadz.com.';
+        status.textContent='Network error. Please call (346) 988-5449 or email info@lakesidethreadz.com.';
         status.style.background='#fee2e2';status.style.color='#7f1d1d';status.style.display='block';
       }finally{
         if(btn){btn.disabled=false;btn.innerText=btn.dataset._t||'Send'}
