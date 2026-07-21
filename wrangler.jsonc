@@ -1,6 +1,7 @@
 {
   // Cloudflare Worker config for lakesidethreadz.com
-  // Static assets served from the repo root; worker handles /api/*.
+  // Static assets served from the repo root; worker handles /api/*
+  // (contact form + rich-quote submit + B2B outreach engine).
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "lakesidethreadz",
   "main": "worker.js",
@@ -13,8 +14,26 @@
   },
   "vars": {
     "CONTACT_TO": "hello@lakesidethreadz.com",
-    "CONTACT_FROM": "noreply@lakesidethreadz.com"
+    "CONTACT_FROM": "noreply@lakesidethreadz.com",
+    "DAILY_CAP": "10"
+  },
+  // KV — stores outreach prospects, suppression list, daily counters, and
+  // newsletter subscribers. Create the namespace in the dashboard OR via
+  // `wrangler kv namespace create STATUS`, then paste the id below.
+  "kv_namespaces": [
+    { "binding": "STATUS", "id": "REPLACE_WITH_KV_ID" }
+  ],
+  // Cron triggers — outreach runs Tue-Fri at 10am CT; newsletter on the 1st.
+  "triggers": {
+    "crons": [
+      "0 15 * * 2-5",
+      "0 16 1 * *"
+    ]
   }
-  // Set RESEND_API_KEY as a Secret in the Worker dashboard.
-  // Optionally set CONTACT_CC (comma-separated) in the dashboard vars.
+  // Set these as SECRETS in the Worker dashboard (Settings → Variables and Secrets):
+  //   RESEND_API_KEY   — Resend API key (already set for the contact form)
+  //   OUTREACH_KEY     — random string; gates admin outreach endpoints
+  // Optional dashboard vars:
+  //   CONTACT_CC        (comma-separated CC list on contact/quote emails)
+  //   OUTREACH_REPLY_TO (override Reply-To on outreach emails)
 }

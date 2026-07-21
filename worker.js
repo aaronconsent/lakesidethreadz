@@ -1,16 +1,39 @@
 // worker.js — Cloudflare Worker for lakesidethreadz.com
 // Handles POST /api/contact and POST /api/quote (Resend email).
+// Plus B2B outreach engine (see functions/api/outreach.js) — 3-touch cold
+// sequence + monthly seasonal newsletter, cron-driven, KV-backed.
 // Falls through to env.ASSETS.fetch for all static assets.
 //
 // Required env vars (Worker → Settings → Variables and Secrets):
-//   RESEND_API_KEY  (secret, Resend API key)
+//   RESEND_API_KEY  (secret, Resend API key — shared across all email paths)
+//   OUTREACH_KEY    (secret, admin auth for outreach + newsletter endpoints)
 // Optional vars (set in wrangler.jsonc → vars):
-//   CONTACT_TO    — default: info@lakesidethreadz.com  (verify with Aaron)
-//   CONTACT_FROM  — default: noreply@lakesidethreadz.com (domain must be verified in Resend)
-//   CONTACT_CC    — optional comma-separated CC list
+//   CONTACT_TO      — default: hello@lakesidethreadz.com
+//   CONTACT_FROM    — default: noreply@lakesidethreadz.com
+//   CONTACT_CC      — optional comma-separated CC list
+//   DAILY_CAP       — max outreach sends per day (default 10)
+//   OUTREACH_REPLY_TO — optional override for outreach Reply-To
+
+import {
+  runOutreach, prospectsPost, statsGet, runGet, unsubGet, webhookPost,
+  runNewsletter, newsletterContentPost, newsletterStatsGet, newsletterRunGet,
+} from "./functions/api/outreach.js";
 
 const SIMPLE_ENDPOINTS = new Set(["/api/contact", "/api/quote"]);
 const RICH_QUOTE_ENDPOINT = "/api/submit-quote";
+
+// Outreach routes — most are admin-gated (?key=OUTREACH_KEY); /unsub is public
+// per CAN-SPAM one-click-unsub requirement.
+const OUTREACH_ROUTES = {
+  "POST /api/outreach/prospects": prospectsPost,
+  "GET /api/outreach/stats":      statsGet,
+  "GET /api/outreach/run":        runGet,
+  "GET /api/outreach/unsub":      unsubGet,
+  "POST /api/outreach/webhook":   webhookPost,
+  "POST /api/newsletter/content": newsletterContentPost,
+  "GET /api/newsletter/stats":    newsletterStatsGet,
+  "GET /api/newsletter/run":      newsletterRunGet,
+};
 
 export default {
   async fetch(request, env, ctx) {
@@ -29,7 +52,22 @@ export default {
       return await handleRichQuote(request, env);
     }
 
+    const outreachHandler = OUTREACH_ROUTES[`${request.method} ${path}`];
+    if (outreachHandler) return await outreachHandler({ request, env });
+
     return env.ASSETS.fetch(request);
+  },
+
+  // Cron triggers (defined in wrangler.jsonc):
+  //   "0 15 * * 2-5"  — Tue-Fri at 15:00 UTC (10am CT) → outreach batch (max DAILY_CAP)
+  //   "0 16 1 * *"    — 1st of month, 16:00 UTC (11am CT) → seasonal newsletter
+  async scheduled(event, env, ctx) {
+    // Distinguish the two crons by cron string.
+    if (event.cron === "0 16 1 * *") {
+      ctx.waitUntil(runNewsletter(env));
+    } else {
+      ctx.waitUntil(runOutreach(env));
+    }
   },
 };
 
