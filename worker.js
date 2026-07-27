@@ -17,13 +17,15 @@
 import {
   runOutreach, prospectsPost, statsGet, runGet, unsubGet, webhookPost,
   runNewsletter, newsletterContentPost, newsletterStatsGet, newsletterRunGet,
+  dashboardGet,
 } from "./functions/api/outreach.js";
 
 const SIMPLE_ENDPOINTS = new Set(["/api/contact", "/api/quote"]);
 const RICH_QUOTE_ENDPOINT = "/api/submit-quote";
 
 // Outreach routes — most are admin-gated (?key=OUTREACH_KEY); /unsub is public
-// per CAN-SPAM one-click-unsub requirement.
+// per CAN-SPAM one-click-unsub requirement. /dashboard gated separately by
+// DASHBOARD_KEY so the client can view stats without owning write access.
 const OUTREACH_ROUTES = {
   "POST /api/outreach/prospects": prospectsPost,
   "GET /api/outreach/stats":      statsGet,
@@ -33,6 +35,7 @@ const OUTREACH_ROUTES = {
   "POST /api/newsletter/content": newsletterContentPost,
   "GET /api/newsletter/stats":    newsletterStatsGet,
   "GET /api/newsletter/run":      newsletterRunGet,
+  "GET /dashboard":               dashboardGet,
 };
 
 export default {

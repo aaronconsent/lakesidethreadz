@@ -577,3 +577,239 @@ export async function newsletterRunGet({ request, env }) {
   if (!authed(url, env)) return json({ error: 'Unauthorized' }, 401);
   return json(await runNewsletter(env));
 }
+
+// ---------------------------------------------------------------------------
+// Client-shareable dashboard — READ-ONLY view of outreach progress.
+// Gated by DASHBOARD_KEY (separate from OUTREACH_KEY) so Aaron can safely
+// share the dashboard URL with the client without exposing write access.
+// URL: /dashboard?key=<DASHBOARD_KEY>
+// ---------------------------------------------------------------------------
+const dashAuthed = (url, env) =>
+  env.DASHBOARD_KEY && url.searchParams.get('key') === env.DASHBOARD_KEY;
+
+export async function dashboardGet({ request, env }) {
+  const url = new URL(request.url);
+  // Accept either DASHBOARD_KEY or OUTREACH_KEY (owner + operator both have access)
+  if (!dashAuthed(url, env) && !authed(url, env)) {
+    return new Response(RENDER_LOGIN_HTML, {
+      status: 401,
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    });
+  }
+  if (!env.STATUS) {
+    return new Response('<pre>KV binding STATUS not configured.</pre>', {
+      status: 500, headers: { 'Content-Type': 'text/html' },
+    });
+  }
+
+  // Compute all the numbers from KV.
+  const prospects = await listProspects(env);
+  const today = new Date().toISOString().slice(0, 10);
+
+  const totalProspects = prospects.length;
+  const byStatus = prospects.reduce((a, p) => { a[p.status || 'unknown'] = (a[p.status || 'unknown'] || 0) + 1; return a; }, {});
+  const byTouches = prospects.reduce((a, p) => { const n = (p.touches || []).length; a[n] = (a[n] || 0) + 1; return a; }, {});
+  const byCategory = prospects.reduce((a, p) => { const c = (p.category || 'uncategorized').slice(0, 30); a[c] = (a[c] || 0) + 1; return a; }, {});
+  const engagedCount = prospects.filter(p => p.engaged).length;
+
+  // Send activity — sum the daily logs for last 30 days.
+  const dailyLogs = {};
+  {
+    let cursor;
+    do {
+      const res = await env.STATUS.list({ prefix: 'outreach:log:', cursor });
+      for (const k of res.keys) {
+        const day = k.name.slice('outreach:log:'.length);
+        const v = await env.STATUS.get(k.name, 'json');
+        if (v) dailyLogs[day] = v.sent || 0;
+      }
+      cursor = res.list_complete ? null : res.cursor;
+    } while (cursor);
+  }
+  const sortedDays = Object.keys(dailyLogs).sort();
+  const last30 = sortedDays.slice(-30);
+  const sentToday = dailyLogs[today] || 0;
+  const sentThisWeek = (() => {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setUTCDate(now.getUTCDate() - now.getUTCDay());
+    const startISO = startOfWeek.toISOString().slice(0, 10);
+    return sortedDays.filter(d => d >= startISO).reduce((s, d) => s + dailyLogs[d], 0);
+  })();
+  const sentThisMonth = (() => {
+    const month = today.slice(0, 7);
+    return sortedDays.filter(d => d.startsWith(month)).reduce((s, d) => s + dailyLogs[d], 0);
+  })();
+  const sentAllTime = sortedDays.reduce((s, d) => s + dailyLogs[d], 0);
+
+  // Newsletter subs
+  const newsletterSubs = [];
+  {
+    let cursor;
+    do {
+      const res = await env.STATUS.list({ prefix: 'newsletter:sub:', cursor });
+      for (const k of res.keys) newsletterSubs.push(k.name.slice('newsletter:sub:'.length));
+      cursor = res.list_complete ? null : res.cursor;
+    } while (cursor);
+  }
+  const monthKey = today.slice(0, 7);
+  const newsletterSent = await env.STATUS.get('newsletter:sent:' + monthKey, 'json');
+  const newsletterReady = !!(await env.STATUS.get('newsletter:content:' + monthKey));
+
+  // Recent activity — last N sends. Derive from prospect.touches[] timestamps.
+  const recent = [];
+  for (const p of prospects) {
+    for (const t of (p.touches || [])) {
+      recent.push({ email: p.email, org: p.org || '(no org)', touch: t.n, ts: t.ts, engaged: p.engaged, status: p.status });
+    }
+  }
+  recent.sort((a, b) => b.ts - a.ts);
+  const recentTop = recent.slice(0, 20);
+
+  // Suppressions
+  let suppressCount = 0;
+  {
+    let cursor;
+    do {
+      const res = await env.STATUS.list({ prefix: 'outreach:suppress:', cursor });
+      suppressCount += res.keys.length;
+      cursor = res.list_complete ? null : res.cursor;
+    } while (cursor);
+  }
+
+  const stats = {
+    totalProspects, byStatus, byTouches, byCategory, engagedCount,
+    sentToday, sentThisWeek, sentThisMonth, sentAllTime,
+    last30, dailyLogs, dailyCap: parseInt(env.DAILY_CAP || '10', 10),
+    newsletterSubs: newsletterSubs.length, newsletterSentThisMonth: newsletterSent,
+    newsletterReady, monthKey,
+    recent: recentTop, suppressCount,
+  };
+  return new Response(renderDashboard(stats), {
+    status: 200,
+    headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+  });
+}
+
+// ---------- Rendering helpers (inline HTML/CSS — self-contained page) ------
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fmtTs(ts) {
+  const d = new Date(ts);
+  return d.toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+}
+function bar(v, max, color) {
+  const pct = max > 0 ? Math.max(2, Math.round((v / max) * 100)) : 0;
+  return `<div style="background:${color};height:10px;width:${pct}%;border-radius:3px;min-width:2px"></div>`;
+}
+function tile(label, value, sub = '') {
+  return `<div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,15,90,0.06);border:1px solid #eef">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#001E78;opacity:.7;font-weight:600;margin-bottom:6px">${esc(label)}</div>
+    <div style="font-size:36px;line-height:1;color:#001E78;font-weight:700">${esc(value)}</div>
+    ${sub ? `<div style="font-size:12px;color:#666;margin-top:6px">${esc(sub)}</div>` : ''}
+  </div>`;
+}
+function renderDashboard(s) {
+  const asOf = new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+  const statusBars = Object.entries(s.byStatus).map(([k, v]) =>
+    `<tr><td style="padding:6px 12px 6px 0">${esc(k)}</td><td style="padding:6px 0;font-weight:600;text-align:right;width:60px">${v}</td><td style="padding:6px 0 6px 12px;width:180px">${bar(v, s.totalProspects, '#001E78')}</td></tr>`
+  ).join('');
+  const touchBars = [0, 1, 2, 3].map(n => {
+    const v = s.byTouches[n] || 0;
+    const label = n === 0 ? 'Not yet touched' : `Touched ${n}×`;
+    return `<tr><td style="padding:6px 12px 6px 0">${label}</td><td style="padding:6px 0;font-weight:600;text-align:right;width:60px">${v}</td><td style="padding:6px 0 6px 12px;width:180px">${bar(v, s.totalProspects, '#F09600')}</td></tr>`;
+  }).join('');
+  const catRows = Object.entries(s.byCategory).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, v]) =>
+    `<tr><td style="padding:6px 12px 6px 0">${esc(k || '(none)')}</td><td style="padding:6px 0;font-weight:600;text-align:right;width:60px">${v}</td><td style="padding:6px 0 6px 12px;width:180px">${bar(v, Math.max(...Object.values(s.byCategory)), '#E10078')}</td></tr>`
+  ).join('');
+  const maxSend = Math.max(1, ...s.last30.map(d => s.dailyLogs[d] || 0));
+  const send30 = s.last30.map(d => {
+    const v = s.dailyLogs[d] || 0;
+    const pct = Math.round((v / maxSend) * 100);
+    return `<div title="${d}: ${v} sends" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:70px"><div style="background:#001E78;height:${pct}%;min-height:${v>0?2:0}px;border-radius:2px"></div></div>`;
+  }).join('');
+  const recentRows = s.recent.length ? s.recent.map(r =>
+    `<tr>
+      <td style="padding:8px 12px 8px 0;color:#666;white-space:nowrap;font-family:monospace;font-size:12px">${esc(fmtTs(r.ts))}</td>
+      <td style="padding:8px 12px 8px 0"><div style="font-weight:600;color:#001E78">${esc(r.org)}</div><div style="font-size:12px;color:#666">${esc(r.email)}</div></td>
+      <td style="padding:8px 12px 8px 0;text-align:center;font-weight:600">Touch ${r.touch}</td>
+      <td style="padding:8px 0">${r.engaged ? `<span style="background:#dcfce7;color:#14532d;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600">${esc(r.engaged)}</span>` : ''}</td>
+    </tr>`
+  ).join('') : `<tr><td colspan="4" style="padding:16px;text-align:center;color:#888;font-style:italic">No sends yet — waiting for the first cron run or prospect upload.</td></tr>`;
+
+  return `<!doctype html><html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <meta http-equiv="refresh" content="60">
+    <title>Outreach Dashboard · Lakeside Ink &amp; Threadz</title>
+    <style>
+      *{box-sizing:border-box}
+      body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F8F9FE;color:#222;line-height:1.5}
+      .wrap{max-width:1200px;margin:0 auto;padding:32px 24px}
+      h1{font-size:28px;margin:0 0 4px;color:#001E78}
+      .sub{color:#666;font-size:14px;margin-bottom:32px}
+      .grid{display:grid;gap:16px;margin-bottom:32px}
+      .tiles-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+      .cols-2{grid-template-columns:1fr 1fr}
+      @media (max-width:800px){.cols-2{grid-template-columns:1fr}}
+      .card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 8px rgba(0,15,90,0.06);border:1px solid #eef}
+      .card h2{margin:0 0 16px;font-size:16px;color:#001E78;text-transform:uppercase;letter-spacing:.05em}
+      table{width:100%;border-collapse:collapse;font-size:14px}
+      table th{text-align:left;padding:8px 12px 8px 0;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#888;border-bottom:1px solid #eef;font-weight:600}
+      .send30{display:flex;gap:3px;align-items:flex-end;padding:8px 0}
+    </style>
+  </head><body>
+    <div class="wrap">
+      <h1>Outreach Dashboard</h1>
+      <p class="sub">Lakeside Ink &amp; Threadz · B2B cold-email + monthly newsletter · <strong>as of ${esc(asOf)}</strong> · auto-refreshes every 60s</p>
+
+      <div class="grid tiles-4">
+        ${tile('Total prospects', s.totalProspects, `${s.byStatus.active || 0} active · ${s.byStatus.done || 0} completed · ${s.byStatus.unsubscribed || 0} unsub`)}
+        ${tile('Sent today', s.sentToday, `Daily cap ${s.dailyCap}`)}
+        ${tile('This week', s.sentThisWeek, 'Since Sunday')}
+        ${tile('This month', s.sentThisMonth, esc(s.monthKey))}
+        ${tile('All-time sends', s.sentAllTime, 'Every email since launch')}
+        ${tile('Engaged prospects', s.engagedCount, 'Opened or clicked at least once')}
+        ${tile('Newsletter subs', s.newsletterSubs, s.newsletterReady ? `${s.monthKey} draft ready` : `${s.monthKey} fallback will send`)}
+        ${tile('Suppressed', s.suppressCount, 'Bounces + complaints + unsub — never re-sent')}
+      </div>
+
+      <div class="grid cols-2">
+        <div class="card">
+          <h2>Prospect status</h2>
+          <table><tbody>${statusBars || '<tr><td colspan="3" style="padding:16px;text-align:center;color:#888">No prospects yet.</td></tr>'}</tbody></table>
+        </div>
+        <div class="card">
+          <h2>Touch progression</h2>
+          <table><tbody>${touchBars}</tbody></table>
+        </div>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="card">
+          <h2>Top categories</h2>
+          <table><tbody>${catRows || '<tr><td colspan="3" style="padding:16px;text-align:center;color:#888">No prospects yet.</td></tr>'}</tbody></table>
+        </div>
+        <div class="card">
+          <h2>Last 30 days of sends</h2>
+          <div class="send30">${send30 || '<div style="color:#888;padding:16px">No sends yet.</div>'}</div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-top:4px"><span>${s.last30[0] || ''}</span><span>${s.last30[s.last30.length - 1] || ''}</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Recent activity</h2>
+        <table>
+          <thead><tr><th>When</th><th>Prospect</th><th style="text-align:center">Touch</th><th>Engagement</th></tr></thead>
+          <tbody>${recentRows}</tbody>
+        </table>
+      </div>
+
+      <p style="margin-top:32px;text-align:center;color:#888;font-size:12px">Internal dashboard · not indexed · read-only · powered by Cloudflare Workers + KV</p>
+    </div>
+  </body></html>`;
+}
+
+const RENDER_LOGIN_HTML = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard · Access required</title><style>body{margin:0;font-family:-apple-system,sans-serif;background:#001E78;color:#fff;display:grid;place-items:center;min-height:100vh}form{background:#fff;color:#222;padding:32px;border-radius:14px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)}h1{margin:0 0 8px;color:#001E78;font-size:22px}p{color:#666;font-size:14px;margin:0 0 20px}input{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;font-size:15px;margin-bottom:12px;font-family:monospace}button{width:100%;padding:12px;background:linear-gradient(90deg,#F09600,#E10078);color:#fff;border:0;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}</style></head><body><form onsubmit="event.preventDefault();window.location.href='/dashboard?key='+encodeURIComponent(this.k.value)"><h1>Dashboard access</h1><p>Paste your dashboard key to view outreach progress.</p><input name="k" placeholder="Dashboard key" required autofocus><button type="submit">View dashboard</button></form></body></html>`;
