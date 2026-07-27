@@ -195,17 +195,32 @@ Don't want these? Unsubscribe: ${unsubUrl}`;
 // ---------------------------------------------------------------------------
 // KV helpers
 // ---------------------------------------------------------------------------
-async function listProspects(env) {
+// Cloudflare Workers caps subrequests per invocation (50 on free, 1000 on paid).
+// Since dashboard + cron both listProspects, we cap concurrent reads and expose
+// a `maxReads` guard. Set to Infinity for cron (which can afford to burn more
+// budget), lower for dashboard rendering.
+async function listProspects(env, opts = {}) {
+  const maxReads = opts.maxReads ?? 45; // safe under 50 default
   const out = [];
   let cursor;
-  do {
+  let totalKeys = 0;
+  let capped = false;
+  outer: do {
     const res = await env.STATUS.list({ prefix: 'outreach:prospect:', cursor });
-    for (const k of res.keys) {
-      const v = await env.STATUS.get(k.name, 'json');
-      if (v) out.push({ _key: k.name, ...v });
+    totalKeys += res.keys.length;
+    // Batch-read this page's values in parallel with a hard cap.
+    const budgetLeft = maxReads - out.length;
+    if (budgetLeft <= 0) { capped = true; break outer; }
+    const slice = res.keys.slice(0, budgetLeft);
+    const values = await Promise.all(slice.map(k => env.STATUS.get(k.name, 'json')));
+    for (let i = 0; i < slice.length; i++) {
+      if (values[i]) out.push({ _key: slice[i].name, ...values[i] });
     }
+    if (res.keys.length > budgetLeft) { capped = true; break outer; }
     cursor = res.list_complete ? null : res.cursor;
   } while (cursor);
+  out._totalKeys = totalKeys;
+  out._capped = capped;
   return out;
 }
 
@@ -223,7 +238,11 @@ export async function runOutreach(env) {
   const log = (await env.STATUS.get('outreach:log:' + today, 'json')) || { sent: 0 };
   if (log.sent >= cap) return { ok: true, sent: 0, note: 'daily cap reached' };
 
-  const prospects = await listProspects(env);
+  // Cron gets a higher read budget than dashboard — we need to iterate all
+  // prospects to find sendable ones. Paid Workers allow 1000 subrequests; free
+  // caps at 50 (in which case only the first ~45 prospects ever get contacted
+  // on this run — cron re-runs daily so we still make progress, just slowly).
+  const prospects = await listProspects(env, { maxReads: 200 });
   const now = Date.now();
   let sent = 0;
   const results = [];
@@ -610,11 +629,15 @@ export async function dashboardGet({ request, env }) {
     });
   }
 
-  // Compute all the numbers from KV.
+  // Compute all the numbers from KV. Capped read to stay under CF subrequest
+  // limit. Prospect counts stay accurate (from _totalKeys), only the
+  // per-prospect detail (categories, touch buckets) is truncated when capped.
   const prospects = await listProspects(env);
   const today = new Date().toISOString().slice(0, 10);
 
-  const totalProspects = prospects.length;
+  const totalProspects = prospects._totalKeys || prospects.length;
+  const prospectsShown = prospects.length;
+  const prospectsCapped = !!prospects._capped;
   const byStatus = prospects.reduce((a, p) => { a[p.status || 'unknown'] = (a[p.status || 'unknown'] || 0) + 1; return a; }, {});
   const byTouches = prospects.reduce((a, p) => { const n = (p.touches || []).length; a[n] = (a[n] || 0) + 1; return a; }, {});
   const byCategory = prospects.reduce((a, p) => { const c = (p.category || 'uncategorized').slice(0, 30); a[c] = (a[c] || 0) + 1; return a; }, {});
