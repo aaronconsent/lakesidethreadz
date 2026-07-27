@@ -685,6 +685,45 @@ export async function dashboardGet({ request, env }) {
     } while (cursor);
   }
 
+  // Form submissions (contact / quote / rich-quote) — newest 20 for display.
+  const submissions = [];
+  {
+    let cursor;
+    do {
+      const res = await env.STATUS.list({ prefix: 'submissions:', cursor });
+      for (const k of res.keys) {
+        const v = await env.STATUS.get(k.name, 'json');
+        if (v) submissions.push(v);
+      }
+      cursor = res.list_complete ? null : res.cursor;
+    } while (cursor);
+  }
+  submissions.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  const submissionsTotal = submissions.length;
+  const submissionsRecent = submissions.slice(0, 20);
+  const submissions7d = submissions.filter(s => s.ts > Date.now() - 7 * 86400 * 1000).length;
+
+  // Blog posts — parse from sitemap.xml (auto-updated by enhance.py).
+  const blogPosts = [];
+  try {
+    const smRes = await env.ASSETS.fetch(new Request('https://lakesidethreadz.com/sitemap.xml'));
+    if (smRes.ok) {
+      const smText = await smRes.text();
+      // Simple regex parse — <url><loc>...</loc><lastmod>...</lastmod></url>.
+      const urlRe = /<url>([\s\S]*?)<\/url>/g;
+      let m;
+      while ((m = urlRe.exec(smText)) !== null) {
+        const loc = /<loc>([^<]+)<\/loc>/.exec(m[1])?.[1] || '';
+        const lastmod = /<lastmod>([^<]+)<\/lastmod>/.exec(m[1])?.[1] || '';
+        if (loc.includes('/blog/') && !loc.match(/\/blog\/(?:[^\/]+\/)?$/)) {
+          // Skip /blog/ listing + /blog/<category>/ listing; keep only posts.
+          blogPosts.push({ url: loc, lastmod });
+        }
+      }
+    }
+  } catch (e) { /* sitemap unreachable — leave empty */ }
+  blogPosts.sort((a, b) => b.lastmod.localeCompare(a.lastmod));
+
   const stats = {
     totalProspects, byStatus, byTouches, byCategory, engagedCount,
     sentToday, sentThisWeek, sentThisMonth, sentAllTime,
@@ -692,6 +731,8 @@ export async function dashboardGet({ request, env }) {
     newsletterSubs: newsletterSubs.length, newsletterSentThisMonth: newsletterSent,
     newsletterReady, monthKey,
     recent: recentTop, suppressCount,
+    submissionsTotal, submissions7d, submissionsRecent,
+    blogPosts,
   };
   return new Response(renderDashboard(stats), {
     status: 200,
@@ -815,9 +856,66 @@ function renderDashboard(s) {
         </table>
       </div>
 
+      <div class="grid2">
+        <div class="card">
+          <h2>Form submissions</h2>
+          <div style="display:flex;gap:12px;margin-bottom:16px">
+            ${tile('Total', s.submissionsTotal || 0, 'all time')}
+            ${tile('Last 7d', s.submissions7d || 0, 'contact + quote')}
+          </div>
+          <table>
+            <thead><tr><th>When</th><th>Kind</th><th>From</th><th>Detail</th></tr></thead>
+            <tbody>${submissionRows(s.submissionsRecent || [])}</tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h2>Blog posts</h2>
+          <div style="display:flex;gap:12px;margin-bottom:16px">
+            ${tile('Published', (s.blogPosts || []).length, 'in sitemap')}
+            ${tile('Latest', latestBlogDate(s.blogPosts), '')}
+          </div>
+          <table>
+            <thead><tr><th>Published</th><th>Post</th></tr></thead>
+            <tbody>${blogRows(s.blogPosts || [])}</tbody>
+          </table>
+        </div>
+      </div>
+
       <p style="margin-top:32px;text-align:center;color:#888;font-size:12px">Internal dashboard · not indexed · read-only · powered by Cloudflare Workers + KV</p>
     </div>
   </body></html>`;
+}
+
+function submissionRows(subs) {
+  if (!subs.length) return `<tr><td colspan="4" style="padding:16px;text-align:center;color:#888">No submissions yet.</td></tr>`;
+  return subs.map(s => {
+    const detail = s.kind === 'rich-quote'
+      ? `${esc(s.product || '—')} × ${esc(s.quantity || '?')} (est $${esc(s.estimate || '?')})`
+      : `${esc(s.service || '—')}`;
+    return `<tr>
+      <td style="color:#666;font-size:12px">${esc(fmtTs(s.ts))}</td>
+      <td><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:${s.kind==='rich-quote'?'#fef3c7':s.kind==='quote'?'#dbeafe':'#e0e7ff'};color:#001E78">${esc(s.kind)}</span></td>
+      <td>${esc(s.name || '—')}<br><span style="color:#888;font-size:11px">${esc(s.email || '')}</span></td>
+      <td style="color:#444;font-size:12px">${detail}</td>
+    </tr>`;
+  }).join('');
+}
+
+function blogRows(posts) {
+  if (!posts.length) return `<tr><td colspan="2" style="padding:16px;text-align:center;color:#888">No posts published yet.</td></tr>`;
+  return posts.slice(0, 20).map(p => {
+    const slug = (p.url.match(/\/blog\/([^\/]+)\/([^\/]+)\/?$/) || []).slice(1);
+    const label = slug.length === 2 ? `${slug[0]} · ${slug[1].replace(/-/g, ' ')}` : p.url;
+    return `<tr>
+      <td style="color:#666;font-size:12px;white-space:nowrap">${esc((p.lastmod || '').slice(0, 10))}</td>
+      <td><a href="${esc(p.url)}" target="_blank" style="color:#001E78;text-decoration:none;font-weight:500">${esc(label)}</a></td>
+    </tr>`;
+  }).join('');
+}
+
+function latestBlogDate(posts) {
+  if (!posts || !posts.length) return '—';
+  return (posts[0].lastmod || '').slice(0, 10) || '—';
 }
 
 // POST /api/outreach/test-blast?key=…

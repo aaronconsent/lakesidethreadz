@@ -149,6 +149,13 @@ async function handleFormSubmit(request, env, endpoint) {
     return json({ error: "Email send threw", detail: String(e) }, 502);
   }
 
+  // Log submission to KV for dashboard visibility (1yr TTL).
+  if (env.STATUS) {
+    const rec = { ts: Date.now(), endpoint, kind: endpoint === "/api/quote" ? "quote" : "contact", name, email, phone, service, message: message.slice(0, 500) };
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    await env.STATUS.put(`submissions:${id}`, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 365 });
+  }
+
   return json({ ok: true }, 200);
 }
 
@@ -226,6 +233,11 @@ async function handleRichQuote(request, env) {
     if (!r.ok) return json({ error: "Email send failed", detail: await safeText(r) }, 502);
   } catch (e) {
     return json({ error: "Email send threw", detail: String(e) }, 502);
+  }
+  if (env.STATUS) {
+    const rec = { ts: Date.now(), endpoint: RICH_QUOTE_ENDPOINT, kind: "rich-quote", name, email, phone, business, product: body.product, quantity: body.quantity, estimate: est.total };
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    await env.STATUS.put(`submissions:${id}`, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 365 });
   }
   return json({ ok: true }, 200);
 }
