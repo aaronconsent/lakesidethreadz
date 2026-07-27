@@ -55,8 +55,17 @@ function textToHtml(text) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
-  // Linkify http/https URLs
-  html = html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color:#001E78">$1</a>');
+  // Linkify http/https URLs. Trailing sentence punctuation (,.;:!?)`") is NOT
+  // part of the URL and must sit OUTSIDE the anchor — otherwise the recipient
+  // clicks and hits /quote, or /quote. and gets a 404. Trim it off.
+  html = html.replace(/(https?:\/\/[^\s<]+)/g, (m) => {
+    const trail = m.match(/[.,;:!?)"'\]]+$/);
+    if (trail) {
+      const url = m.slice(0, -trail[0].length);
+      return `<a href="${url}" style="color:#001E78">${url}</a>${trail[0]}`;
+    }
+    return `<a href="${m}" style="color:#001E78">${m}</a>`;
+  });
   // Linkify (346) 988-5449 style phone numbers
   html = html.replace(/\((\d{3})\)\s*(\d{3})-(\d{4})/g,
     '<a href="tel:+1$1$2$3" style="color:#001E78">($1) $2-$3</a>');
