@@ -175,17 +175,21 @@ Lakeside Ink & Threadz`,
     },
   };
   const b = bodies[n];
-  const footer = `
+  // Text footer keeps the raw URL (plaintext clients need it visible).
+  // HTML footer renders "Unsubscribe" as a friendly anchor.
+  const footerText = `
 
 —
 ${ADDRESS_LINE}
 Don't want these? Unsubscribe: ${unsubUrl}`;
-  const text = b.text + footer;
-  return {
-    subject: b.subject,
-    text,
-    html: textToHtml(text),
-  };
+  const text = b.text + footerText;
+  let html = textToHtml(text);
+  // Replace the linkified full URL in the footer with a friendly "Unsubscribe" link.
+  html = html.replace(
+    /Don(&#39;|')t want these\? Unsubscribe: <a[^>]+>[^<]+<\/a>/,
+    `<a href="${unsubUrl}" style="color:#7a7a7a;text-decoration:underline">Unsubscribe from these emails</a>`,
+  );
+  return { subject: b.subject, text, html };
 }
 
 // ---------------------------------------------------------------------------
@@ -251,7 +255,9 @@ export async function runOutreach(env) {
         text: msg.text,
         html: msg.html,     // required for Resend open/click tracking
         headers: {
-          'List-Unsubscribe': `<${unsubUrl}>`,
+          // Two URIs: mailto (Apple Mail's native unsub pill requires this)
+          // + https one-click (Gmail/Outlook use this once reputation lands).
+          'List-Unsubscribe': `<mailto:hello@lakesidethreadz.com?subject=unsubscribe>, <${unsubUrl}>`,
           'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
         },
       }),
@@ -529,7 +535,9 @@ Unsubscribe: ${unsubUrl}`;
         text: bodyText,
         html: textToHtml(bodyText),
         headers: {
-          'List-Unsubscribe': `<${unsubUrl}>`,
+          // Two URIs: mailto (Apple Mail's native unsub pill requires this)
+          // + https one-click (Gmail/Outlook use this once reputation lands).
+          'List-Unsubscribe': `<mailto:hello@lakesidethreadz.com?subject=unsubscribe>, <${unsubUrl}>`,
           'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
         },
       }),
