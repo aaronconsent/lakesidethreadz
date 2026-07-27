@@ -26,10 +26,16 @@
 // CTA: /quote (existing 8-step calculator) + phone.
 // ============================================================================
 
-const FROM = 'Lakeside Ink & Threadz <hello@lakesidethreadz.com>';
+// From = the owner's real name — 2-3× higher open + reply rate on cold vs a
+// generic business-name From. Reply-to defaults to the same address so replies
+// land in Kristen's Gmail (mobile push notifications = free SMS-equivalent).
+const FROM = 'Kristen Coats <hello@lakesidethreadz.com>';
 const SITE = 'https://lakesidethreadz.com';
 const PHONE_DISPLAY = '(346) 988-5449';
-const ADDRESS = 'Lakeside Ink & Threadz, Onalaska, TX 77360';
+// CAN-SPAM footer requires a valid physical postal address. Shop street is
+// NOT public on the site (owner preference); it appears only in email footers.
+const ADDRESS_STREET = '62 Main St';
+const ADDRESS_LINE   = 'Lakeside Ink & Threadz · 62 Main St · Onalaska, TX 77360';
 // Days to wait after the previous touch before the next one goes out.
 const TOUCH_GAP_DAYS = [0, 4, 5]; // touch1 immediately, touch2 +4d, touch3 +5d after that
 
@@ -39,88 +45,137 @@ const json = (obj, status = 200) =>
 const authed = (url, env) =>
   env.OUTREACH_KEY && url.searchParams.get('key') === env.OUTREACH_KEY;
 
+// Convert a plain-text email body into a minimal HTML equivalent.
+// Purpose: Resend can only inject open-pixel + click-tracking wrappers into
+// HTML parts. Sending text-only kills engagement events (no opens/clicks →
+// no auto-newsletter enrollment loop). Every send therefore includes both
+// a text and an html part with the same content.
+function textToHtml(text) {
+  let html = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  // Linkify http/https URLs
+  html = html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color:#001E78">$1</a>');
+  // Linkify (346) 988-5449 style phone numbers
+  html = html.replace(/\((\d{3})\)\s*(\d{3})-(\d{4})/g,
+    '<a href="tel:+1$1$2$3" style="color:#001E78">($1) $2-$3</a>');
+  // Paragraph breaks (double-newline) + soft breaks (single-newline)
+  html = html.split(/\n\n+/).map(p => `<p style="margin:0 0 1em">${p.replace(/\n/g, '<br>')}</p>`).join('');
+  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.55;color:#222;max-width:600px">${html}</div>`;
+}
+
 // ---------------------------------------------------------------------------
-// Email templates — B2B uniform program, short and human, no jargon.
+// Email templates — Kristen's voice (warm, plain-spoken), tightened for cold
+// touch #1 (~100 words), category-personalized hook per ICP.
 // ---------------------------------------------------------------------------
+function pickHook(category) {
+  const c = (category || '').toLowerCase();
+  // Medical / healthcare
+  if (c.includes('doctor') || c.includes('physician') || c.includes('dental') || c.includes('orthodont')
+      || c.includes('chiropract') || c.includes('veterinar') || c.includes('medical') || c.includes('optomet')
+      || c.includes('physical therapy') || c.includes('urgent care') || c.includes('clinic') || c.includes('nurse')) {
+    return "Matching embroidered polos or scrubs make a small office feel intentional — patients notice, staff feels like a team, and it's clear at a glance who works there.";
+  }
+  // Sports teams / schools / booster clubs
+  if (c.includes('sport') || c.includes('team') || c.includes('school') || c.includes('booster')
+      || c.includes('coach') || c.includes('athlet') || c.includes('league') || c.includes('gym')
+      || c.includes('fitness') || c.includes('crossfit') || c.includes('martial') || c.includes('dance')) {
+    return "Matching team shirts, hats, or warmups turn a group of players into a team — and give parents (and the photographer) something clean to focus on at every game.";
+  }
+  // Church / ministry
+  if (c.includes('church') || c.includes('ministry') || c.includes('religious') || c.includes('faith')) {
+    return "Matching shirts for VBS, mission trips, or staff make a Sunday feel intentional — kids and volunteers spot each other in a crowd, and you've got something to hand out for years.";
+  }
+  // Marina / lake / fishing
+  if (c.includes('marina') || c.includes('boat') || c.includes('lake') || c.includes('fish') || c.includes('dock')) {
+    return "On Lake Livingston, matching PFG shirts or embroidered hats set your team apart from the weekend crowd — customers know immediately who works there.";
+  }
+  // Trades / construction
+  if (c.includes('hvac') || c.includes('heating') || c.includes('air condition') || c.includes('plumb')
+      || c.includes('electric') || c.includes('roof') || c.includes('landscap') || c.includes('lawn')
+      || c.includes('construct') || c.includes('build') || c.includes('concrete') || c.includes('remodel')
+      || c.includes('excavat') || c.includes('pest')) {
+    return "When your crew shows up in matching branded gear, customers notice — it's the small thing that quietly says 'this is a real business, not a guy with a truck.'";
+  }
+  // Restaurants / hospitality
+  if (c.includes('restaurant') || c.includes('bar') || c.includes('cafe') || c.includes('coffee')
+      || c.includes('food') || c.includes('caterer') || c.includes('event')) {
+    return "A branded polo or apron on every server does more brand work than an Instagram post — customers notice, and the staff feels like a team.";
+  }
+  // Real estate / professional
+  if (c.includes('real estate') || c.includes('realtor') || c.includes('property') || c.includes('insurance')
+      || c.includes('law') || c.includes('attorney') || c.includes('accountant') || c.includes('cpa')) {
+    return "A branded polo at every open house, closing, or client meeting turns your team into a walking advertisement — clients remember the agent who showed up looking sharp.";
+  }
+  // Fallback — small biz / retail / anything else
+  return "Matching branded apparel on your team quietly reinforces your brand every day, on every job — and it's cheaper per piece than you'd think.";
+}
+
 function renderTouch(n, p, unsubUrl) {
   const org = p.org || 'your team';
   const first = (p.name || '').split(' ')[0] || 'there';
-  const category = (p.category || '').toLowerCase();
-  // Personalize the second sentence by category when we have one.
-  let hook = '';
-  if (category.includes('hvac') || category.includes('plumb') || category.includes('electric') || category.includes('roof') || category.includes('landscape')) {
-    hook = 'Your crew is the first thing customers see at the job site — a matching embroidered polo or work shirt tells them the pro they hired showed up.';
-  } else if (category.includes('marina') || category.includes('boat') || category.includes('lake') || category.includes('fish')) {
-    hook = 'Lake-adjacent businesses live and die by looking legit at the dock — matching PFG shirts or embroidered hats set your team apart from the weekend crowd.';
-  } else if (category.includes('restaurant') || category.includes('bar') || category.includes('cafe') || category.includes('coffee') || category.includes('food')) {
-    hook = 'A branded polo or apron on every server does more brand work than any Instagram post — customers notice, and staff feel like a team.';
-  } else if (category.includes('church') || category.includes('ministry')) {
-    hook = "Matching shirts for VBS, mission trips, or staff make a Sunday feel intentional — and they're cheaper per piece than you'd think.";
-  } else if (category.includes('real estate') || category.includes('realtor') || category.includes('property')) {
-    hook = 'Branded polos at open houses and closings turn every showing into a soft advertisement — clients remember the agent who looked like a pro.';
-  } else {
-    hook = 'Matching branded apparel on your team quietly reinforces your brand on every job, every event, every day.';
-  }
+  const hook = pickHook(p.category);
 
   const bodies = {
     1: {
-      subject: `Custom uniforms for ${org}?`,
+      subject: `Quick hello from Lakeside Ink & Threadz`,
       text:
 `Hi ${first},
 
-We run Lakeside Ink & Threadz — a custom embroidery and DTF printing shop here in Onalaska, serving businesses around Lake Livingston and East Texas.
+I'm Kristen Coats, owner of Lakeside Ink & Threadz — a small custom embroidery and DTF printing shop right here in Onalaska. We help local businesses, offices, teams, and organizations with custom apparel and branded gifts.
 
 ${hook}
 
-We do no-minimum orders (embroider one polo or fifty), free digital proofs before any production starts, and a text-message reorder program so once your logo is on file, restocking is a one-text conversation. Volume discounts start at 12 pieces (8% off) and drop to 25% off at 100+.
+If ${org} could use custom polos, hats, work shirts, team apparel, or personalized gifts, I'd love to send a free digital proof of what your logo would look like on a real piece. No minimums, quick turnaround, and every project gets the same attention whether it's one shirt or a hundred.
 
-If ${org} could use a small uniform program — or just wants to see what your logo looks like on a real polo — the fastest way is our instant calculator (${SITE}/quote — under 60 seconds for a real price) or just reply here.
+Reply here with a rough idea and I'll get you a real price — usually same day. Or run a 60-second quote at ${SITE}/quote, or call/text me at ${PHONE_DISPLAY}.
 
-Or call/text ${PHONE_DISPLAY} — we usually pick up.
-
-Lakeside Ink & Threadz
-Onalaska, TX`,
-    },
-    2: {
-      subject: `Re: Custom uniforms for ${org}?`,
-      text:
-`Hi ${first},
-
-Quick follow-up — the short version:
-
-- Free digital proof of your logo on the exact garment before you commit
-- No minimums, real volume discounts once you cross 12 pieces
-- One-time $45 digitizing fee, then reorders are one text away
-- 5-10 business day turnaround; rush available if the deadline's tight
-
-Instant price: ${SITE}/quote
-Or text ${PHONE_DISPLAY} with a rough count and I'll get you a number today.
-
+Kristen
 Lakeside Ink & Threadz`,
     },
-    3: {
-      subject: `Last note from Lakeside`,
+    2: {
+      subject: `Re: Quick hello from Lakeside Ink & Threadz`,
       text:
 `Hi ${first},
 
-Last note from us — no bad feelings if uniforms aren't on the roadmap right now. The offer doesn't expire: whenever ${org} is ready, one text or a 60-second quote at ${SITE}/quote gets you a price.
+Circling back — I know inboxes get busy. Short version of what we do:
 
-We also do church/ministry apparel, fishing tournament kits, wedding party gifts, and one-off custom pieces — same free-proof, no-minimum treatment.
+- Custom embroidery, DTF printing, personalized gifts
+- No minimums (one piece or 500)
+- Free digital proof of your logo before anything gets made
+- 5-10 business day turnaround (rush available if you're up against a deadline)
 
-${PHONE_DISPLAY} · ${SITE}
+If ${org} is even thinking about branded polos, work shirts, team apparel, event/uniform gear, or a one-off personalized piece — reply here or text ${PHONE_DISPLAY} and I'll walk you through what actually fits.
 
-Lakeside Ink & Threadz
-Onalaska, TX`,
+Instant estimate anytime at ${SITE}/quote.
+
+Kristen`,
+    },
+    3: {
+      subject: `Last note from Kristen at Lakeside`,
+      text:
+`Hi ${first},
+
+Last one from me — no hard feelings if this isn't the right time. Whenever ${org} does need custom apparel, embroidered gifts, or a small uniform program, we're right here in Onalaska and happy to help.
+
+${SITE}/quote for an instant price, or text me at ${PHONE_DISPLAY}.
+
+Kristen
+Lakeside Ink & Threadz`,
     },
   };
   const b = bodies[n];
-  return {
-    subject: b.subject,
-    text: `${b.text}
+  const footer = `
 
 —
-${ADDRESS}
-Don't want these? Unsubscribe: ${unsubUrl}`,
+${ADDRESS_LINE}
+Don't want these? Unsubscribe: ${unsubUrl}`;
+  const text = b.text + footer;
+  return {
+    subject: b.subject,
+    text,
+    html: textToHtml(text),
   };
 }
 
@@ -185,7 +240,11 @@ export async function runOutreach(env) {
         reply_to: env.OUTREACH_REPLY_TO || undefined,
         subject: msg.subject,
         text: msg.text,
-        headers: { 'List-Unsubscribe': `<${unsubUrl}>` },
+        html: msg.html,     // required for Resend open/click tracking
+        headers: {
+          'List-Unsubscribe': `<${unsubUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
       }),
     });
 
@@ -420,7 +479,7 @@ Text ${PHONE_DISPLAY} or fire up ${SITE}/quote to lock in a slot.` },
 
 ${SITE}/quote` },
   }[month] || seasons[1];
-  return { subject: seasons.subj, text: seasons.body + `\n\nOr call/text ${PHONE_DISPLAY} — we usually pick up.\n\nLakeside Ink & Threadz` };
+  return { subject: seasons.subj, text: seasons.body + `\n\nOr call/text ${PHONE_DISPLAY} — I usually pick up.\n\nKristen\nLakeside Ink & Threadz` };
 }
 
 export async function runNewsletter(env) {
@@ -445,6 +504,11 @@ export async function runNewsletter(env) {
   for (const email of subs) {
     if (await suppressed(env, email)) { skipped++; continue; }
     const unsubUrl = `${SITE}/api/outreach/unsub?e=${btoa(email)}`;
+    const bodyText = `${issue.text}
+
+—
+${ADDRESS_LINE}
+Unsubscribe: ${unsubUrl}`;
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
@@ -453,12 +517,12 @@ export async function runNewsletter(env) {
         to: [email],
         reply_to: env.OUTREACH_REPLY_TO || undefined,
         subject: issue.subject,
-        text: `${issue.text}
-
-—
-${ADDRESS}
-Unsubscribe: ${unsubUrl}`,
-        headers: { 'List-Unsubscribe': `<${unsubUrl}>` },
+        text: bodyText,
+        html: textToHtml(bodyText),
+        headers: {
+          'List-Unsubscribe': `<${unsubUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
       }),
     });
     if (r.ok) sent++;
