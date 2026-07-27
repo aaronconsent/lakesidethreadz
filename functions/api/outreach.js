@@ -812,4 +812,56 @@ function renderDashboard(s) {
   </body></html>`;
 }
 
+// POST /api/outreach/test-blast?key=…
+// body: { emails:[], name?, org?, category? }
+// Sends all 3 outreach touches to every email in the list, 60s between each
+// individual send. Subject prefixed with "[Test: Day 0/4/9]". Bypasses KV.
+export async function testBlastPost({ request, env, ctx }) {
+  const url = new URL(request.url);
+  if (!authed(url, env)) return json({ error: 'Unauthorized' }, 401);
+  const body = await request.json().catch(() => null);
+  if (!body || !Array.isArray(body.emails) || !body.emails.length) {
+    return json({ error: 'emails[] required' }, 400);
+  }
+  if (!env.RESEND_API_KEY) return json({ error: 'RESEND_API_KEY not set' }, 503);
+  const emails = body.emails.map(e => String(e).trim()).filter(e => e.includes('@'));
+  const p = {
+    email: '',
+    name: body.name || 'Aaron',
+    org: body.org || 'your team',
+    category: body.category || 'professional-services',
+  };
+  const DAY_LABELS = [0, 4, 9];
+  ctx.waitUntil((async () => {
+    let idx = 0;
+    for (let touchIdx = 0; touchIdx < 3; touchIdx++) {
+      for (const email of emails) {
+        if (idx > 0) await new Promise(r => setTimeout(r, 60000));
+        idx++;
+        const unsubUrl = `${SITE}/api/outreach/unsub?e=${btoa(email.toLowerCase())}`;
+        const msg = renderTouch(touchIdx + 1, { ...p, email }, unsubUrl);
+        msg.subject = `[Test: Day ${DAY_LABELS[touchIdx]}] ${msg.subject}`;
+        try {
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              from: FROM,
+              to: [email],
+              subject: msg.subject,
+              text: msg.text,
+              html: msg.html,
+              headers: {
+                'List-Unsubscribe': `<${unsubUrl}>`,
+                'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+              },
+            }),
+          });
+        } catch (e) { /* best-effort */ }
+      }
+    }
+  })());
+  return json({ ok: true, queued: emails.length * 3, spacing_seconds: 60, recipients: emails });
+}
+
 const RENDER_LOGIN_HTML = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard · Access required</title><style>body{margin:0;font-family:-apple-system,sans-serif;background:#001E78;color:#fff;display:grid;place-items:center;min-height:100vh}form{background:#fff;color:#222;padding:32px;border-radius:14px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)}h1{margin:0 0 8px;color:#001E78;font-size:22px}p{color:#666;font-size:14px;margin:0 0 20px}input{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;font-size:15px;margin-bottom:12px;font-family:monospace}button{width:100%;padding:12px;background:linear-gradient(90deg,#F09600,#E10078);color:#fff;border:0;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}</style></head><body><form onsubmit="event.preventDefault();window.location.href='/dashboard?key='+encodeURIComponent(this.k.value)"><h1>Dashboard access</h1><p>Paste your dashboard key to view outreach progress.</p><input name="k" placeholder="Dashboard key" required autofocus><button type="submit">View dashboard</button></form></body></html>`;

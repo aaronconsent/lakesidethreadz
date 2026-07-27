@@ -17,7 +17,7 @@
 import {
   runOutreach, prospectsPost, statsGet, runGet, unsubGet, webhookPost,
   runNewsletter, newsletterContentPost, newsletterStatsGet, newsletterRunGet,
-  dashboardGet,
+  dashboardGet, testBlastPost,
 } from "./functions/api/outreach.js";
 
 const SIMPLE_ENDPOINTS = new Set(["/api/contact", "/api/quote"]);
@@ -36,6 +36,7 @@ const OUTREACH_ROUTES = {
   "GET /api/newsletter/stats":    newsletterStatsGet,
   "GET /api/newsletter/run":      newsletterRunGet,
   "GET /dashboard":               dashboardGet,
+  "POST /api/outreach/test-blast": testBlastPost,
 };
 
 export default {
@@ -56,7 +57,7 @@ export default {
     }
 
     const outreachHandler = OUTREACH_ROUTES[`${request.method} ${path}`];
-    if (outreachHandler) return await outreachHandler({ request, env });
+    if (outreachHandler) return await outreachHandler({ request, env, ctx });
 
     return env.ASSETS.fetch(request);
   },
