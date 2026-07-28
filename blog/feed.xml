@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Lakeside Ink &amp; Threadz Blog</title>
+    <link>https://lakesidethreadz.com/blog/</link>
+    <atom:link href="https://lakesidethreadz.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Timelines, playbooks, and behind-the-stitches notes on custom embroidery, DTF printing, team uniforms, and branded apparel from Kristen at L.I.T. in Onalaska, TX.</description>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 28 Jul 2026 00:43:43 +0000</lastBuildDate>
+    <ttl>720</ttl>
+    <image>
+      <url>https://lakesidethreadz.com/assets/og-default.png</url>
+      <title>Lakeside Ink &amp; Threadz Blog</title>
+      <link>https://lakesidethreadz.com/blog/</link>
+    </image>
+    <item>
+      <title>The clinic staff uniform playbook: embroidered scrubs, polos, and lab coats without the reorder chaos</title>
+      <link>https://lakesidethreadz.com/blog/medical-professional/clinic-staff-uniform-playbook/</link>
+      <guid isPermaLink="true">https://lakesidethreadz.com/blog/medical-professional/clinic-staff-uniform-playbook/</guid>
+      <pubDate>Sat, 01 Aug 2026 00:00:00 +0000</pubDate>
+      <description>A practical guide for small clinics and dental offices on embroidered scrubs, staff polos, and lab coats — sizing, thread colors, reorders, and turnaround times.</description>
+      <category>Medical &amp; Professional</category>
+      <author>hello@lakesidethreadz.com (Kristen Coats)</author>
+      <enclosure url="https://lakesidethreadz.com/blog/medical-professional/clinic-staff-uniform-playbook/og.png" type="image/png" length="0"/>
+      <media:content url="https://lakesidethreadz.com/blog/medical-professional/clinic-staff-uniform-playbook/og.png" medium="image" type="image/png"/>
+    </item>
+    <item>
+      <title>The low-lift chamber apparel program (a playbook for chamber directors)</title>
+      <link>https://lakesidethreadz.com/blog/chambers-networking/chamber-member-apparel-program/</link>
+      <guid isPermaLink="true">https://lakesidethreadz.com/blog/chambers-networking/chamber-member-apparel-program/</guid>
+      <pubDate>Thu, 30 Jul 2026 00:00:00 +0000</pubDate>
+      <description>How a chamber of commerce can offer a branded-apparel option to member businesses without adding inventory, staff time, or a single shipping headache.</description>
+      <category>Chambers &amp; Networking</category>
+      <author>hello@lakesidethreadz.com (Kristen Coats)</author>
+      <enclosure url="https://lakesidethreadz.com/blog/chambers-networking/chamber-member-apparel-program/og.png" type="image/png" length="0"/>
+      <media:content url="https://lakesidethreadz.com/blog/chambers-networking/chamber-member-apparel-program/og.png" medium="image" type="image/png"/>
+    </item>
+    <item>
+      <title>The team-uniform timeline: how to work backwards from your first game</title>
+      <link>https://lakesidethreadz.com/blog/back-to-school/team-uniform-ordering-timeline/</link>
+      <guid isPermaLink="true">https://lakesidethreadz.com/blog/back-to-school/team-uniform-ordering-timeline/</guid>
+      <pubDate>Wed, 29 Jul 2026 00:00:00 +0000</pubDate>
+      <description>A week-by-week ordering timeline for school and sports team uniforms so nothing arrives late — from proof approval through pickup, planned back from first-game day.</description>
+      <category>Back to School</category>
+      <author>hello@lakesidethreadz.com (Kristen Coats)</author>
+      <enclosure url="https://lakesidethreadz.com/blog/back-to-school/team-uniform-ordering-timeline/og.png" type="image/png" length="0"/>
+      <media:content url="https://lakesidethreadz.com/blog/back-to-school/team-uniform-ordering-timeline/og.png" medium="image" type="image/png"/>
+    </item>
+  </channel>
+</rss>
