@@ -20,6 +20,7 @@ import {
   dashboardGet, testBlastPost,
 } from "./functions/api/outreach.js";
 import { runBufferSync, bufferSyncHandler } from "./functions/api/buffer.js";
+import { storeQueuePost, storeQueueList, storeQueueDecide, storeReviewPage } from "./functions/api/store.js";
 
 const SIMPLE_ENDPOINTS = new Set(["/api/contact", "/api/quote"]);
 const RICH_QUOTE_ENDPOINT = "/api/submit-quote";
@@ -40,6 +41,9 @@ const OUTREACH_ROUTES = {
   "POST /api/outreach/test-blast": testBlastPost,
   "GET /api/buffer/sync":         bufferSyncHandler,
   "POST /api/buffer/sync":        bufferSyncHandler,
+  "POST /api/store/queue":        storeQueuePost,
+  "GET /api/store/queue":         storeQueueList,
+  "GET /dashboard/review":        storeReviewPage,
 };
 
 export default {
@@ -61,6 +65,11 @@ export default {
 
     const outreachHandler = OUTREACH_ROUTES[`${request.method} ${path}`];
     if (outreachHandler) return await outreachHandler({ request, env, ctx });
+
+    // Dynamic /api/store/queue/<slug>/{approve,reject}
+    if (request.method === "POST" && /^\/api\/store\/queue\/[^\/]+\/(approve|reject)$/.test(path)) {
+      return await storeQueueDecide({ request, env, ctx });
+    }
 
     return env.ASSETS.fetch(request);
   },
