@@ -1,21 +1,24 @@
 // ============================================================================
-// Buffer autopost — pushes new blog posts from /blog/feed.xml into the
-// user's Buffer queue via the Buffer v1 API.
+// Buffer autopost — pushes new blog posts from /blog/feed.xml into the user's
+// Buffer queue via the Buffer GraphQL API (https://api.buffer.com/graphql).
 //
 // Trigger:
-//   POST /api/buffer/sync?key=<OUTREACH_KEY>   (manual / from blog agent)
-//   scheduled event with cron "17 */2 * * *"   (belt-and-suspenders every 2h)
+//   POST /api/buffer/sync?key=<OUTREACH_KEY>         (manual / from blog agent)
+//   GET  /api/buffer/sync?key=<OUTREACH_KEY>&dry=1   (preview, no writes)
+//   scheduled cron "17 */2 * * *"                    (belt-and-suspenders 2h)
 //
 // Requires Worker secret:
-//   BUFFER_ACCESS_TOKEN  — Buffer personal access token from
-//                          https://publish.buffer.com/account/apps
+//   BUFFER_ACCESS_TOKEN  — Buffer personal access token from the developer
+//                          console (https://developers.buffer.com/). This
+//                          works ONLY with the new GraphQL API; the legacy
+//                          REST API rejects "public API tokens".
 //
 // KV state:
-//   buffer:posted:<guid>  -> {ts, profileIds:[...], updateIds:[...]}
-//     Prevents double-posting on retry / cron re-run.
+//   buffer:posted:<guid>  -> {ts, results:[{channel, service, ok, postId, error?}]}
+//     Prevents double-posting on retry or cron re-run.
 // ============================================================================
 
-const BUFFER_BASE = 'https://api.bufferapp.com/1';
+const GRAPHQL_URL = 'https://api.buffer.com/graphql';
 
 const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json' } });
@@ -24,7 +27,29 @@ const authed = (url, env) =>
   env.OUTREACH_KEY && url.searchParams.get('key') === env.OUTREACH_KEY;
 
 // -----------------------------------------------------------------------------
-// Parse /blog/feed.xml into [{guid, link, title, description, category, pubDate, image}]
+// GraphQL helper.
+// -----------------------------------------------------------------------------
+async function gql(token, query, variables = {}) {
+  const r = await fetch(GRAPHQL_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+  const body = await r.text();
+  if (!r.ok) throw new Error(`buffer ${r.status}: ${body.slice(0, 300)}`);
+  let parsed;
+  try { parsed = JSON.parse(body); } catch { throw new Error(`buffer non-JSON: ${body.slice(0, 300)}`); }
+  if (parsed.errors && parsed.errors.length) {
+    throw new Error(`buffer graphql: ${parsed.errors.map(e => e.message).join('; ').slice(0, 300)}`);
+  }
+  return parsed.data;
+}
+
+// -----------------------------------------------------------------------------
+// Feed parsing — /blog/feed.xml → [{title, link, guid, description, image, category}]
 // -----------------------------------------------------------------------------
 function parseFeed(xml) {
   const items = [];
@@ -64,7 +89,7 @@ function decodeXML(s) {
 }
 
 // -----------------------------------------------------------------------------
-// Compose channel-appropriate copy. Skips emojis per brand preference.
+// Per-service copy. No emojis (brand preference).
 // -----------------------------------------------------------------------------
 function composeCopy(item, service) {
   const url = item.link;
@@ -72,135 +97,146 @@ function composeCopy(item, service) {
   const desc = item.description;
   switch ((service || '').toLowerCase()) {
     case 'twitter': {
-      // 280 chars total. Leave room for URL (t.co ~23) + space.
-      const room = 280 - 24;
+      const room = 280 - 24; // leave room for t.co URL
       let text = title;
       if (text.length > room) text = text.slice(0, room - 1) + '…';
       return `${text} ${url}`;
     }
     case 'facebook':
-    case 'facebookgroup':
-    case 'facebookpage': {
       return `${title}\n\n${desc}\n\n${url}`;
-    }
     case 'linkedin':
-    case 'linkedin_business':
-    case 'linkedin_page': {
       return `${title}\n\n${desc}\n\nRead the full playbook: ${url}\n\n— Kristen at Lakeside Ink & Threadz, Onalaska TX`;
-    }
     case 'pinterest': {
-      // Pinterest description shows well; keep <= 500 chars.
       let d = desc;
       if (d.length > 480) d = d.slice(0, 479) + '…';
       return `${title}\n\n${d}`;
     }
-    case 'instagram': {
+    case 'instagram':
       return `${title}\n\n${desc}\n\nLink in bio → lakesidethreadz.com/blog`;
-    }
+    case 'googlebusiness':
+      // GBP truncates hard at ~1500 chars, prefers concise + link.
+      return `${title}\n\n${desc}\n\nRead more: ${url}`;
     default:
       return `${title}\n\n${desc}\n\n${url}`;
   }
 }
 
 // -----------------------------------------------------------------------------
-// Buffer API helpers
+// GraphQL queries & mutation.
 // -----------------------------------------------------------------------------
-async function bufferProfiles(token) {
-  const r = await fetch(`${BUFFER_BASE}/profiles.json?access_token=${encodeURIComponent(token)}`);
-  if (!r.ok) throw new Error(`profiles ${r.status}: ${await r.text()}`);
-  return r.json();
-}
+const Q_ACCOUNT = `{ account { id organizations { id name } } }`;
 
-async function bufferCreateUpdate(token, item, profile) {
-  const text = composeCopy(item, profile.service);
-  const params = new URLSearchParams();
-  params.set('access_token', token);
-  params.append('profile_ids[]', profile.id);
-  params.set('text', text);
-  params.set('shorten', 'false');
-  // Attach OG image as the update's media. Buffer displays it as the card.
-  if (item.image) {
-    params.set('media[link]', item.link);
-    params.set('media[picture]', item.image);
-    params.set('media[thumbnail]', item.image);
-    params.set('media[title]', item.title);
-    params.set('media[description]', item.description);
+const Q_CHANNELS = `
+  query($input: ChannelsInput!) {
+    channels(input: $input) { id name service serviceId }
   }
-  const r = await fetch(`${BUFFER_BASE}/updates/create.json`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params.toString(),
-  });
-  const body = await r.text();
-  if (!r.ok) throw new Error(`update ${r.status}: ${body.slice(0, 200)}`);
-  try { return JSON.parse(body); } catch { return { raw: body }; }
+`;
+
+const M_CREATE_POST = `
+  mutation($input: CreatePostInput!) {
+    createPost(input: $input) {
+      __typename
+      ... on PostCreationSuccess { post { id status createdAt } }
+      ... on PostCreationErrors  { userFriendlyMessage message }
+      ... on CommonMutationErrors { userFriendlyMessage message }
+    }
+  }
+`;
+
+async function createBufferPost(token, channel, item) {
+  const text = composeCopy(item, channel.service);
+  const assets = [];
+  if (item.link) {
+    assets.push({
+      link: {
+        url: item.link,
+        title: item.title,
+        description: item.description,
+        thumbnailUrl: item.image || undefined,
+      },
+    });
+  }
+  const input = {
+    channelId: channel.id,
+    text,
+    assets,
+    mode: 'addToQueue',
+    schedulingType: 'automatic',
+  };
+  const data = await gql(token, M_CREATE_POST, { input });
+  const r = data.createPost;
+  if (r && r.post && r.post.id) return { ok: true, postId: r.post.id, status: r.post.status };
+  return { ok: false, error: (r && (r.userFriendlyMessage || r.message)) || 'unknown createPost response' };
 }
 
 // -----------------------------------------------------------------------------
 // Core sync — invoked from HTTP handler + scheduled().
 // -----------------------------------------------------------------------------
 export async function runBufferSync(env, opts = {}) {
-  if (!env.BUFFER_ACCESS_TOKEN) {
-    return { ok: false, error: 'BUFFER_ACCESS_TOKEN not set' };
-  }
-  if (!env.STATUS) {
-    return { ok: false, error: 'STATUS KV not bound' };
-  }
+  if (!env.BUFFER_ACCESS_TOKEN) return { ok: false, error: 'BUFFER_ACCESS_TOKEN not set' };
+  if (!env.STATUS) return { ok: false, error: 'STATUS KV not bound' };
   const dryRun = !!opts.dryRun;
+  const token = env.BUFFER_ACCESS_TOKEN;
 
-  // 1. Fetch feed from same origin via assets.
+  // 1. Feed.
   const feedRes = await env.ASSETS.fetch(new Request('https://lakesidethreadz.com/blog/feed.xml'));
   if (!feedRes.ok) return { ok: false, error: `feed fetch ${feedRes.status}` };
-  const xml = await feedRes.text();
-  const items = parseFeed(xml);
+  const items = parseFeed(await feedRes.text());
 
-  // 2. Filter to unposted.
+  // 2. Unposted.
   const fresh = [];
   for (const it of items) {
-    const key = `buffer:posted:${it.guid}`;
-    const seen = await env.STATUS.get(key);
+    const seen = await env.STATUS.get(`buffer:posted:${it.guid}`);
     if (!seen) fresh.push(it);
   }
   if (!fresh.length) return { ok: true, posted: 0, feed_items: items.length, note: 'nothing new' };
 
-  // 3. Fetch profiles once.
-  let profiles;
+  // 3. Org + channels.
+  let acct, channels;
   try {
-    profiles = await bufferProfiles(env.BUFFER_ACCESS_TOKEN);
+    acct = await gql(token, Q_ACCOUNT);
+    const orgId = acct && acct.account && acct.account.organizations && acct.account.organizations[0] && acct.account.organizations[0].id;
+    if (!orgId) return { ok: false, error: 'no Buffer organization on account' };
+    const ch = await gql(token, Q_CHANNELS, { input: { organizationId: orgId } });
+    channels = ch.channels || [];
   } catch (e) {
     return { ok: false, error: String(e.message || e) };
   }
-  if (!Array.isArray(profiles) || !profiles.length) {
-    return { ok: false, error: 'no Buffer profiles connected' };
-  }
+  if (!channels.length) return { ok: false, error: 'no Buffer channels connected' };
 
-  // 4. Post each fresh item to every profile. Mark KV even on partial failure
-  //    so we don't double-post the succeeded profiles on retry.
+  // 4. Post each fresh item to every channel.
   const results = [];
   for (const it of fresh) {
-    const perProfile = [];
-    for (const p of profiles) {
+    const perChannel = [];
+    for (const ch of channels) {
       try {
         if (dryRun) {
-          perProfile.push({ profile: p.service, id: p.id, dryRun: true });
+          perChannel.push({ channel: ch.name, service: ch.service, dryRun: true, preview: composeCopy(it, ch.service).slice(0, 140) });
         } else {
-          const r = await bufferCreateUpdate(env.BUFFER_ACCESS_TOKEN, it, p);
-          perProfile.push({ profile: p.service, id: p.id, ok: true, updateId: (r.updates && r.updates[0] && r.updates[0].id) || null });
+          const r = await createBufferPost(token, ch, it);
+          perChannel.push({ channel: ch.name, service: ch.service, ...r });
         }
       } catch (e) {
-        perProfile.push({ profile: p.service, id: p.id, ok: false, error: String(e.message || e).slice(0, 200) });
+        perChannel.push({ channel: ch.name, service: ch.service, ok: false, error: String(e.message || e).slice(0, 200) });
       }
     }
     if (!dryRun) {
       await env.STATUS.put(
         `buffer:posted:${it.guid}`,
-        JSON.stringify({ ts: Date.now(), title: it.title, results: perProfile }),
+        JSON.stringify({ ts: Date.now(), title: it.title, results: perChannel }),
         { expirationTtl: 60 * 60 * 24 * 365 },
       );
     }
-    results.push({ guid: it.guid, title: it.title, perProfile });
+    results.push({ guid: it.guid, title: it.title, perChannel });
   }
-  return { ok: true, posted: fresh.length, feed_items: items.length, profiles: profiles.length, dryRun, results };
+  return {
+    ok: true,
+    posted: fresh.length,
+    feed_items: items.length,
+    channels: channels.map(c => ({ name: c.name, service: c.service })),
+    dryRun,
+    results,
+  };
 }
 
 // -----------------------------------------------------------------------------
