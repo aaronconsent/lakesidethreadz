@@ -132,13 +132,20 @@ const Q_CHANNELS = `
   }
 `;
 
+// PostActionPayload union: PostActionSuccess | NotFoundError | UnauthorizedError
+//   | UnexpectedError | RestProxyError | ValidationError (…).
+// All error branches carry a `message` field, so we destructure via a common
+// inline fragment on Error interface + specific fragment for success.
 const M_CREATE_POST = `
   mutation($input: CreatePostInput!) {
     createPost(input: $input) {
       __typename
-      ... on PostCreationSuccess { post { id status createdAt } }
-      ... on PostCreationErrors  { userFriendlyMessage message }
-      ... on CommonMutationErrors { userFriendlyMessage message }
+      ... on PostActionSuccess { post { id status createdAt } }
+      ... on NotFoundError { message }
+      ... on UnauthorizedError { message }
+      ... on UnexpectedError { message }
+      ... on RestProxyError { message }
+      ... on ValidationError { message }
     }
   }
 `;
@@ -220,14 +227,19 @@ export async function runBufferSync(env, opts = {}) {
         perChannel.push({ channel: ch.name, service: ch.service, ok: false, error: String(e.message || e).slice(0, 200) });
       }
     }
-    if (!dryRun) {
+    // Only stamp KV if at least one channel succeeded — if every channel
+    // failed we want cron to retry this item next run instead of skipping
+    // it forever. Partial success is still marked (per-channel retry would
+    // require per-channel keys; not worth the complexity right now).
+    const anySuccess = perChannel.some(r => r.ok === true);
+    if (!dryRun && anySuccess) {
       await env.STATUS.put(
         `buffer:posted:${it.guid}`,
         JSON.stringify({ ts: Date.now(), title: it.title, results: perChannel }),
         { expirationTtl: 60 * 60 * 24 * 365 },
       );
     }
-    results.push({ guid: it.guid, title: it.title, perChannel });
+    results.push({ guid: it.guid, title: it.title, perChannel, marked: !dryRun && anySuccess });
   }
   return {
     ok: true,
@@ -247,6 +259,21 @@ export async function runBufferSync(env, opts = {}) {
 export async function bufferSyncHandler({ request, env }) {
   const url = new URL(request.url);
   if (!authed(url, env)) return json({ error: 'Unauthorized' }, 401);
+
+  // ?reset=1 clears every buffer:posted:* key so the next sync retries every
+  // item. Use this once after fixing a mutation bug that stamped failures as
+  // posted; otherwise let cron handle steady state.
+  if (url.searchParams.get('reset') === '1' && env.STATUS) {
+    let deleted = 0;
+    let cursor;
+    do {
+      const res = await env.STATUS.list({ prefix: 'buffer:posted:', cursor });
+      for (const k of res.keys) { await env.STATUS.delete(k.name); deleted++; }
+      cursor = res.list_complete ? null : res.cursor;
+    } while (cursor);
+    return json({ ok: true, reset: true, deleted });
+  }
+
   const dryRun = request.method === 'GET' || url.searchParams.get('dry') === '1';
   const out = await runBufferSync(env, { dryRun });
   return json(out, out.ok ? 200 : 500);
