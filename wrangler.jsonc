@@ -28,12 +28,16 @@
   "triggers": {
     "crons": [
       "0 15 * * 2-5",
-      "0 16 1 * *"
+      "0 16 1 * *",
+      "17 */2 * * *"
     ]
   }
   // Set these as SECRETS in the Worker dashboard (Settings → Variables and Secrets):
-  //   RESEND_API_KEY   — Resend API key (already set for the contact form)
-  //   OUTREACH_KEY     — random string; gates admin outreach endpoints
+  //   RESEND_API_KEY       — Resend API key (already set for the contact form)
+  //   OUTREACH_KEY         — random string; gates admin outreach endpoints
+  //   DASHBOARD_KEY        — random string; gates the read-only /dashboard
+  //   BUFFER_ACCESS_TOKEN  — Buffer personal access token
+  //                          (from https://publish.buffer.com/account/apps)
   // Optional dashboard vars:
   //   CONTACT_CC        (comma-separated CC list on contact/quote emails)
   //   OUTREACH_REPLY_TO (override Reply-To on outreach emails)
