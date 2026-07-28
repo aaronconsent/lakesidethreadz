@@ -185,6 +185,17 @@ export async function runBufferSync(env, opts = {}) {
   const dryRun = !!opts.dryRun;
   const token = env.BUFFER_ACCESS_TOKEN;
 
+  // Rate-limit guard: 100 requests / 15 min per personal access token.
+  // Refuse to run more often than every ~5 min so a runaway caller
+  // (deploy polling, misconfigured cron, retry storm) can't torch the quota.
+  const lastRunKey = 'buffer:v2:lastrun';
+  const lastRun = parseInt((await env.STATUS.get(lastRunKey)) || '0', 10);
+  const MIN_INTERVAL_MS = 5 * 60 * 1000;
+  if (!dryRun && !opts.force && lastRun && (Date.now() - lastRun) < MIN_INTERVAL_MS) {
+    const waitMin = Math.ceil((MIN_INTERVAL_MS - (Date.now() - lastRun)) / 60000);
+    return { ok: true, throttled: true, note: `last sync ${Math.round((Date.now()-lastRun)/60000)}m ago; wait ~${waitMin}m or pass &force=1` };
+  }
+
   // 1. Feed.
   const feedRes = await env.ASSETS.fetch(new Request('https://lakesidethreadz.com/blog/feed.xml'));
   if (!feedRes.ok) return { ok: false, error: `feed fetch ${feedRes.status}` };
@@ -198,7 +209,33 @@ export async function runBufferSync(env, opts = {}) {
   }
   if (!fresh.length) return { ok: true, posted: 0, feed_items: items.length, note: 'nothing new' };
 
-  // 3. Org + channels.
+  // 3. Dry-run early exit — DO NOT call Buffer at all. Preview what we would
+  //    send using a fake channel list (Facebook + Google Business Profile as
+  //    seen in Aaron's account 2026-07-27). Real-run continues below.
+  if (dryRun) {
+    const fakeChannels = [
+      { id: 'preview-facebook', name: 'Lakeside Ink & Threadz', service: 'facebook' },
+      { id: 'preview-googlebusiness', name: 'Lakeside Ink & Threadz', service: 'googlebusiness' },
+    ];
+    return {
+      ok: true,
+      posted: fresh.length,
+      feed_items: items.length,
+      channels: fakeChannels.map(c => ({ name: c.name, service: c.service })),
+      dryRun: true,
+      note: 'dry-run makes ZERO Buffer API calls — safe to poll',
+      results: fresh.map(it => ({
+        guid: it.guid,
+        title: it.title,
+        perChannel: fakeChannels.map(ch => ({
+          channel: ch.name, service: ch.service, dryRun: true,
+          preview: composeCopy(it, ch.service).slice(0, 140),
+        })),
+      })),
+    };
+  }
+
+  // 4. Real-run only from here: hit Buffer (2 GraphQL calls for orgs + channels).
   let acct, channels;
   try {
     acct = await gql(token, Q_ACCOUNT);
@@ -210,6 +247,9 @@ export async function runBufferSync(env, opts = {}) {
     return { ok: false, error: String(e.message || e) };
   }
   if (!channels.length) return { ok: false, error: 'no Buffer channels connected' };
+
+  // Stamp lastrun BEFORE posting so retries within 5 min are rejected.
+  await env.STATUS.put(lastRunKey, String(Date.now()));
 
   // 4. Post each fresh item to every channel.
   const results = [];
