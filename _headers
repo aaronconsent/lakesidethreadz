@@ -7,3 +7,9 @@
 
 /
   Cache-Control: public, max-age=0, must-revalidate
+
+# RSS feeds must be served as application/rss+xml — strict validators
+# (Buffer, IFTTT) reject application/xml.
+/blog/feed.xml
+  Content-Type: application/rss+xml; charset=utf-8
+  Cache-Control: public, max-age=600
