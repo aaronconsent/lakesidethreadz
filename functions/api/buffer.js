@@ -14,7 +14,7 @@
 //                          REST API rejects "public API tokens".
 //
 // KV state:
-//   buffer:posted:<guid>  -> {ts, results:[{channel, service, ok, postId, error?}]}
+//   buffer:v2:posted:<guid>  -> {ts, results:[{channel, service, ok, postId, error?}]}
 //     Prevents double-posting on retry or cron re-run.
 // ============================================================================
 
@@ -193,7 +193,7 @@ export async function runBufferSync(env, opts = {}) {
   // 2. Unposted.
   const fresh = [];
   for (const it of items) {
-    const seen = await env.STATUS.get(`buffer:posted:${it.guid}`);
+    const seen = await env.STATUS.get(`buffer:v2:posted:${it.guid}`);
     if (!seen) fresh.push(it);
   }
   if (!fresh.length) return { ok: true, posted: 0, feed_items: items.length, note: 'nothing new' };
@@ -234,7 +234,7 @@ export async function runBufferSync(env, opts = {}) {
     const anySuccess = perChannel.some(r => r.ok === true);
     if (!dryRun && anySuccess) {
       await env.STATUS.put(
-        `buffer:posted:${it.guid}`,
+        `buffer:v2:posted:${it.guid}`,
         JSON.stringify({ ts: Date.now(), title: it.title, results: perChannel }),
         { expirationTtl: 60 * 60 * 24 * 365 },
       );
@@ -260,14 +260,14 @@ export async function bufferSyncHandler({ request, env }) {
   const url = new URL(request.url);
   if (!authed(url, env)) return json({ error: 'Unauthorized' }, 401);
 
-  // ?reset=1 clears every buffer:posted:* key so the next sync retries every
+  // ?reset=1 clears every buffer:v2:posted:* key so the next sync retries every
   // item. Use this once after fixing a mutation bug that stamped failures as
   // posted; otherwise let cron handle steady state.
   if (url.searchParams.get('reset') === '1' && env.STATUS) {
     let deleted = 0;
     let cursor;
     do {
-      const res = await env.STATUS.list({ prefix: 'buffer:posted:', cursor });
+      const res = await env.STATUS.list({ prefix: 'buffer:v2:posted:', cursor });
       for (const k of res.keys) { await env.STATUS.delete(k.name); deleted++; }
       cursor = res.list_complete ? null : res.cursor;
     } while (cursor);
