@@ -337,7 +337,9 @@ export async function statsGet({ request, env }) {
   const today = new Date().toISOString().slice(0, 10);
   const log = (await env.STATUS.get('outreach:log:' + today, 'json')) || { sent: 0 };
   return json({
-    total: prospects.length,
+    total: prospects._totalKeys || prospects.length,
+    shown: prospects.length,
+    capped: !!prospects._capped,
     by_status: by((p) => p.status),
     by_touches: by((p) => (p.touches || []).length),
     sent_today: log.sent,
