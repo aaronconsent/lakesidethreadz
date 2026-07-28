@@ -200,7 +200,8 @@ Don't want these? Unsubscribe: ${unsubUrl}`;
 // a `maxReads` guard. Set to Infinity for cron (which can afford to burn more
 // budget), lower for dashboard rendering.
 async function listProspects(env, opts = {}) {
-  const maxReads = opts.maxReads ?? 45; // safe under 50 default
+  const maxReads = opts.maxReads ?? 20; // dashboard shares budget with several
+                                        // other prefix listings — 20 is safe.
   const out = [];
   let cursor;
   let totalKeys = 0;
@@ -645,19 +646,22 @@ export async function dashboardGet({ request, env }) {
   const byCategory = prospects.reduce((a, p) => { const c = (p.category || 'uncategorized').slice(0, 30); a[c] = (a[c] || 0) + 1; return a; }, {});
   const engagedCount = prospects.filter(p => p.engaged).length;
 
-  // Send activity — sum the daily logs for last 30 days.
+  // Send activity — sum the daily logs. Only read the most recent 30 days
+  // worth of keys to stay under the CF subrequest limit (dashboard makes
+  // many other KV calls in the same invocation).
   const dailyLogs = {};
   {
-    let cursor;
-    do {
-      const res = await env.STATUS.list({ prefix: 'outreach:log:', cursor });
-      for (const k of res.keys) {
-        const day = k.name.slice('outreach:log:'.length);
-        const v = await env.STATUS.get(k.name, 'json');
-        if (v) dailyLogs[day] = v.sent || 0;
-      }
-      cursor = res.list_complete ? null : res.cursor;
-    } while (cursor);
+    const logRes = await env.STATUS.list({ prefix: 'outreach:log:' });
+    const keys = logRes.keys
+      .map(k => k.name)
+      .sort()
+      .slice(-30);
+    const values = await Promise.all(keys.map(k => env.STATUS.get(k, 'json')));
+    for (let i = 0; i < keys.length; i++) {
+      const day = keys[i].slice('outreach:log:'.length);
+      const v = values[i];
+      if (v) dailyLogs[day] = v.sent || 0;
+    }
   }
   const sortedDays = Object.keys(dailyLogs).sort();
   const last30 = sortedDays.slice(-30);
@@ -710,22 +714,20 @@ export async function dashboardGet({ request, env }) {
     } while (cursor);
   }
 
-  // Form submissions (contact / quote / rich-quote) — newest 20 for display.
+  // Form submissions (contact / quote / rich-quote). Keys are timestamped so
+  // sorting by key name (desc) gives newest first — we only fetch the top 10
+  // full records to keep subrequest count down.
   const submissions = [];
+  let submissionsTotal = 0;
   {
-    let cursor;
-    do {
-      const res = await env.STATUS.list({ prefix: 'submissions:', cursor });
-      for (const k of res.keys) {
-        const v = await env.STATUS.get(k.name, 'json');
-        if (v) submissions.push(v);
-      }
-      cursor = res.list_complete ? null : res.cursor;
-    } while (cursor);
+    const res = await env.STATUS.list({ prefix: 'submissions:' });
+    submissionsTotal = res.keys.length;
+    const newest = res.keys.map(k => k.name).sort().reverse().slice(0, 10);
+    const values = await Promise.all(newest.map(k => env.STATUS.get(k, 'json')));
+    for (const v of values) if (v) submissions.push(v);
   }
   submissions.sort((a, b) => (b.ts || 0) - (a.ts || 0));
-  const submissionsTotal = submissions.length;
-  const submissionsRecent = submissions.slice(0, 20);
+  const submissionsRecent = submissions;
   const submissions7d = submissions.filter(s => s.ts > Date.now() - 7 * 86400 * 1000).length;
 
   // Blog posts — parse from sitemap.xml (auto-updated by enhance.py).
