@@ -81,23 +81,30 @@ export async function storeQueueList({ request, env }) {
   const url = new URL(request.url);
   if (!dashAuthed(url, env)) return json({ error: 'Unauthorized' }, 401);
   if (!env.STATUS) return json({ error: 'STATUS KV not bound' }, 500);
-  const wantStatus = url.searchParams.get('status');  // 'pending' | 'approved' | 'rejected' | ''=all
-  const items = [];
-  let cursor;
-  do {
-    const res = await env.STATUS.list({ prefix: 'store:queue:', cursor });
-    for (const k of res.keys) {
-      // Keep listing cheap — batch reads via Promise.all up front.
-      items.push(k.name);
-    }
-    cursor = res.list_complete ? null : res.cursor;
-  } while (cursor);
-  // Cap detailed reads at 40 to stay well under CF's 50-subrequest limit.
-  const keys = items.slice(0, 40);
-  const values = await Promise.all(keys.map(k => env.STATUS.get(k, 'json')));
-  const out = values.filter(Boolean).filter(v => !wantStatus || v.status === wantStatus);
-  out.sort((a, b) => (b.added_at || 0) - (a.added_at || 0));
-  return json({ ok: true, total: items.length, shown: out.length, items: out });
+  const wantStatus = url.searchParams.get('status') || '';
+  // Optional pagination: ?offset=40 to grab the next batch.
+  const offset = Math.max(0, parseInt(url.searchParams.get('offset') || '0', 10));
+  const PAGE = 25; // safe under CF 50-subrequest ceiling
+  try {
+    const listed = await env.STATUS.list({ prefix: 'store:queue:', limit: 1000 });
+    const allKeys = listed.keys.map(k => k.name);
+    const keys = allKeys.slice(offset, offset + PAGE);
+    const values = await Promise.all(keys.map(k => env.STATUS.get(k, 'json')));
+    let out = values.filter(Boolean);
+    if (wantStatus) out = out.filter(v => v.status === wantStatus);
+    out.sort((a, b) => (b.added_at || 0) - (a.added_at || 0));
+    return json({
+      ok: true,
+      total: allKeys.length,
+      offset,
+      page_size: PAGE,
+      shown: out.length,
+      next_offset: (offset + PAGE < allKeys.length) ? offset + PAGE : null,
+      items: out,
+    });
+  } catch (e) {
+    return json({ error: 'list threw', message: String(e && (e.message || e)).slice(0, 300), stack: String(e && e.stack || '').slice(0, 800) }, 500);
+  }
 }
 
 // POST /api/store/queue/<slug>/approve|reject?key=OUTREACH_KEY
