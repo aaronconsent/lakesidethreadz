@@ -333,6 +333,7 @@ export async function prospectsPost({ request, env }) {
 export async function statsGet({ request, env }) {
   const url = new URL(request.url);
   if (!authed(url, env)) return json({ error: 'Unauthorized' }, 401);
+  try {
   const prospects = await listProspects(env);
   const by = (f) => prospects.reduce((a, p) => ((a[f(p)] = (a[f(p)] || 0) + 1), a), {});
   const today = new Date().toISOString().slice(0, 10);
@@ -345,6 +346,9 @@ export async function statsGet({ request, env }) {
     by_touches: by((p) => (p.touches || []).length),
     sent_today: log.sent,
   });
+  } catch (e) {
+    return json({ error: 'stats threw', message: String(e && (e.message || e)).slice(0, 500), stack: String(e && e.stack || '').slice(0, 1500) }, 500);
+  }
 }
 
 // GET /api/outreach/run?key=…  (manual trigger, same as cron)
@@ -618,6 +622,18 @@ const dashAuthed = (url, env) =>
   env.DASHBOARD_KEY && url.searchParams.get('key') === env.DASHBOARD_KEY;
 
 export async function dashboardGet({ request, env }) {
+  try {
+    return await dashboardGetInner({ request, env });
+  } catch (e) {
+    const msg = (e && (e.stack || e.message)) || String(e);
+    return new Response(
+      `<pre style="font:12px/1.4 monospace;padding:20px;color:#7f1d1d;background:#fee2e2">dashboard error:\n${msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').slice(0,2000)}</pre>`,
+      { status: 500, headers: { 'Content-Type': 'text/html; charset=utf-8' } },
+    );
+  }
+}
+
+async function dashboardGetInner({ request, env }) {
   const url = new URL(request.url);
   // Accept either DASHBOARD_KEY or OUTREACH_KEY (owner + operator both have access)
   if (!dashAuthed(url, env) && !authed(url, env)) {
