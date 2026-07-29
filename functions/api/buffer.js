@@ -132,10 +132,11 @@ const Q_CHANNELS = `
   }
 `;
 
-// PostActionPayload union: PostActionSuccess | NotFoundError | UnauthorizedError
-//   | UnexpectedError | RestProxyError | ValidationError (…).
-// All error branches carry a `message` field, so we destructure via a common
-// inline fragment on Error interface + specific fragment for success.
+// PostActionPayload union — verified against Buffer's schema by trial + error
+// (see task notification 2026-07-28). Members: PostActionSuccess |
+// NotFoundError | UnauthorizedError | UnexpectedError | RestProxyError |
+// ClientError | MutationError | VoidMutationError | LastAdminError.
+// The ...on ClientError branch covers most user-input validation failures.
 const M_CREATE_POST = `
   mutation($input: CreatePostInput!) {
     createPost(input: $input) {
@@ -145,7 +146,8 @@ const M_CREATE_POST = `
       ... on UnauthorizedError { message }
       ... on UnexpectedError { message }
       ... on RestProxyError { message }
-      ... on ValidationError { message }
+      ... on ClientError { message }
+      ... on MutationError { message }
     }
   }
 `;
