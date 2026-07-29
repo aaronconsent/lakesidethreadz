@@ -132,12 +132,12 @@ const Q_CHANNELS = `
   }
 `;
 
-// PostActionPayload union — actual union members (verified 2026-07-28):
-//   PostActionSuccess | NotFoundError | UnauthorizedError | UnexpectedError
-//   | RestProxyError.
-// (Buffer's earlier "Did you mean ClientError, MutationError, …" suggestions
-// were OTHER schema types that are NOT part of this union — spreading them
-// as fragments fails validation. Keep the fragments to the actual members.)
+// PostActionPayload union — full member list (verified via introspection
+// 2026-07-29): PostActionSuccess | NotFoundError | UnauthorizedError |
+// UnexpectedError | RestProxyError | LimitReachedError | InvalidInputError.
+// Buffer Free caps queue at 10 posts per channel — LimitReachedError is the
+// likely branch when the queue is full. InvalidInputError fires on bad
+// payloads (missing fields for a service, bad URL, etc.).
 const M_CREATE_POST = `
   mutation($input: CreatePostInput!) {
     createPost(input: $input) {
@@ -146,7 +146,9 @@ const M_CREATE_POST = `
       ... on NotFoundError { message }
       ... on UnauthorizedError { message }
       ... on UnexpectedError { message }
-      ... on RestProxyError { message }
+      ... on RestProxyError { message code }
+      ... on LimitReachedError { message }
+      ... on InvalidInputError { message }
     }
   }
 `;
