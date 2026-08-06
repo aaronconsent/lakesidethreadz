@@ -19,7 +19,6 @@ import {
   runNewsletter, newsletterContentPost, newsletterStatsGet, newsletterRunGet,
   dashboardGet, testBlastPost,
 } from "./functions/api/outreach.js";
-import { runBufferSync, bufferSyncHandler } from "./functions/api/buffer.js";
 
 const SIMPLE_ENDPOINTS = new Set(["/api/contact", "/api/quote"]);
 const RICH_QUOTE_ENDPOINT = "/api/submit-quote";
@@ -38,8 +37,6 @@ const OUTREACH_ROUTES = {
   "GET /api/newsletter/run":      newsletterRunGet,
   "GET /dashboard":               dashboardGet,
   "POST /api/outreach/test-blast": testBlastPost,
-  "GET /api/buffer/sync":         bufferSyncHandler,
-  "POST /api/buffer/sync":        bufferSyncHandler,
 };
 
 export default {
@@ -72,8 +69,6 @@ export default {
     // Distinguish crons by cron string.
     if (event.cron === "0 16 1 * *") {
       ctx.waitUntil(runNewsletter(env));
-    } else if (event.cron === "17 */2 * * *") {
-      ctx.waitUntil(runBufferSync(env));
     } else {
       ctx.waitUntil(runOutreach(env));
     }

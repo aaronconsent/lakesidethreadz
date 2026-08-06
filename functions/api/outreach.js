@@ -34,8 +34,8 @@ const SITE = 'https://lakesidethreadz.com';
 const PHONE_DISPLAY = '(346) 988-5449';
 // CAN-SPAM footer requires a valid physical postal address. Shop street is
 // NOT public on the site (owner preference); it appears only in email footers.
-const ADDRESS_STREET = '62 Main St';
-const ADDRESS_LINE   = 'Lakeside Ink & Threadz · 62 Main St · Onalaska, TX 77360';
+const ADDRESS_STREET = 'Twin Creeks Dr';
+const ADDRESS_LINE   = 'Lakeside Ink & Threadz · Twin Creeks Dr · Livingston, TX 77351';
 // Days to wait after the previous touch before the next one goes out.
 const TOUCH_GAP_DAYS = [0, 4, 5]; // touch1 immediately, touch2 +4d, touch3 +5d after that
 
