@@ -1,400 +1,185 @@
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>Quote Wizard Preview · Lakeside Ink &amp; Threadz</title>
-<style>
-  :root {
-    --ground: #FAFAF7;
-    --surface: #FFFFFF;
-    --surface-alt: #F3F1EA;
-    --ink: #1A1F35;
-    --ink-soft: #4A5169;
-    --muted: #8A8FA0;
-    --hairline: #E4E1D7;
-    --brand: #001E78;
-    --brand-soft: #EEF0FA;
-    --accent: #F09600;
-    --accent-soft: #FEF3E1;
-    --tier-basic: #6B7280;
-    --tier-basic-soft: #EEF0F2;
-    --tier-premium: #001E78;
-    --tier-premium-soft: #EEF0FA;
-    --tier-pro: #B8860B;
-    --tier-pro-soft: #FBF3DE;
-    --good: #15803D;
-    --shadow-sm: 0 1px 2px rgba(15, 20, 40, .05);
-    --shadow-md: 0 4px 12px rgba(15, 20, 40, .06), 0 1px 3px rgba(15, 20, 40, .04);
-    --shadow-lg: 0 20px 40px -12px rgba(0, 30, 120, .18);
-    --radius-sm: 6px;
-    --radius: 10px;
-    --radius-lg: 16px;
-  }
-  :root:not([data-theme="light"]) {
-    @media (prefers-color-scheme: dark) {
-      --ground: #0B0E1B;
-      --surface: #14182A;
-      --surface-alt: #1B2038;
-      --ink: #F1F2F7;
-      --ink-soft: #B4B9CB;
-      --muted: #6E7488;
-      --hairline: #2A2F44;
-      --brand: #6E8BFF;
-      --brand-soft: #1B2245;
-      --accent: #FFB144;
-      --accent-soft: #2F2312;
-      --tier-basic: #9CA3AF;
-      --tier-basic-soft: #1F2338;
-      --tier-premium: #6E8BFF;
-      --tier-premium-soft: #1B2245;
-      --tier-pro: #E6B85C;
-      --tier-pro-soft: #2E2413;
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .25);
-      --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, .55);
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Quote Wizard Preview · Lakeside Ink &amp; Threadz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Nunito:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <style>
+    :root {
+      --lit-blue:#001E78; --lit-blue-2:#0033AA;
+      --lit-orange:#F09600; --lit-flame:#F05A3C; --lit-pink:#E10078;
+      --ink:#1A1F35; --ink-soft:#4A5169; --muted:#8A8FA0;
+      --ground:#FAFAF7; --surface:#FFFFFF; --surface-alt:#F3F1EA;
+      --hairline:#E4E1D7; --brand-soft:#EEF0FA; --accent-soft:#FEF3E1;
+      --tier-basic:#6B7280; --tier-basic-soft:#EEF0F2;
+      --tier-premium:#001E78; --tier-premium-soft:#EEF0FA;
+      --tier-pro:#B8860B; --tier-pro-soft:#FBF3DE;
+      --good:#15803D;
     }
-  }
-  :root[data-theme="dark"] {
-    --ground: #0B0E1B;
-    --surface: #14182A;
-    --surface-alt: #1B2038;
-    --ink: #F1F2F7;
-    --ink-soft: #B4B9CB;
-    --muted: #6E7488;
-    --hairline: #2A2F44;
-    --brand: #6E8BFF;
-    --brand-soft: #1B2245;
-    --accent: #FFB144;
-    --accent-soft: #2F2312;
-    --tier-basic: #9CA3AF;
-    --tier-basic-soft: #1F2338;
-    --tier-premium: #6E8BFF;
-    --tier-premium-soft: #1B2245;
-    --tier-pro: #E6B85C;
-    --tier-pro-soft: #2E2413;
-  }
+    * { box-sizing: border-box; }
+    body { font-family:'Nunito', system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--ground); margin:0; -webkit-font-smoothing:antialiased; }
+    a { color: var(--lit-blue); }
 
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--ground);
-    color: var(--ink);
-    font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+    /* NAV — same as blog pages */
+    .lit-nav { position:sticky; top:0; z-index:40; background:rgba(255,255,255,.96); backdrop-filter:blur(8px); border-bottom:1px solid #eef0f6; }
+    .lit-nav-inner { max-width:1200px; margin:0 auto; padding:.9rem 1.25rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .lit-brand { display:flex; align-items:center; gap:.65rem; text-decoration:none; color:var(--lit-blue); font-weight:800; font-size:1.05rem; }
+    .lit-brand img { height:34px; width:auto; display:block; }
+    .lit-links { display:none; gap:1.4rem; align-items:center; }
+    .lit-links a { color:#111827; text-decoration:none; font-weight:600; font-size:.95rem; }
+    .lit-links a:hover { color:var(--lit-blue); }
+    .lit-cta-nav { background:linear-gradient(90deg,var(--lit-orange),var(--lit-flame) 55%,var(--lit-pink)); color:#fff !important; padding:.55rem 1rem; border-radius:.6rem; font-weight:700 !important; box-shadow:0 6px 14px rgba(240,90,60,.25); }
+    @media (min-width:900px) { .lit-links { display:flex; } }
 
-  /* Preview banner */
-  .preview-note {
-    background: var(--accent-soft);
-    color: var(--ink);
-    border: 1px dashed var(--accent);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    font-size: 13px;
-    text-align: center;
-    margin-bottom: 24px;
-  }
-  .preview-note strong {
-    color: var(--accent); font-weight: 700; letter-spacing: .04em;
-    text-transform: uppercase; font-size: 11px;
-  }
+    /* Preview banner */
+    .preview-note { background:var(--accent-soft); color:var(--ink); border:1px dashed var(--lit-orange); border-radius:6px; padding:10px 14px; font-size:13px; text-align:center; margin:16px auto 0; max-width:900px; width:calc(100% - 40px); }
+    .preview-note strong { color:var(--lit-orange); font-weight:700; letter-spacing:.04em; text-transform:uppercase; font-size:11px; }
 
-  /* Site header */
-  .brand-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--hairline);
-    margin-bottom: 36px;
-  }
-  .brand-lockup { display: flex; flex-direction: column; }
-  .brand-name {
-    font-weight: 800; letter-spacing: -0.02em; font-size: 22px; color: var(--ink);
-  }
-  .brand-name span { color: var(--brand); }
-  .brand-tag {
-    font-size: 12px; color: var(--muted);
-    letter-spacing: .08em; text-transform: uppercase; margin-top: 4px;
-  }
-  .brand-phone {
-    font-weight: 700; color: var(--brand); font-size: 15px;
-    text-decoration: none; padding: 8px 14px; border-radius: 999px;
-    background: var(--brand-soft); white-space: nowrap;
-  }
+    /* Hero */
+    .lit-hero { background:linear-gradient(135deg,var(--lit-blue) 0%,var(--lit-blue) 50%,var(--lit-blue-2) 100%); color:#fff; padding: 3rem 1.25rem 2.5rem; }
+    .lit-hero-inner { max-width:900px; margin:0 auto; text-align:center; }
+    .lit-hero h1 { font-family:'Bebas Neue', sans-serif; font-weight:400; font-size:clamp(2.4rem, 5vw, 3.6rem); line-height:1.05; letter-spacing:.01em; margin:0 0 .6rem; text-wrap:balance; }
+    .lit-hero p { color:rgba(255,255,255,.85); max-width:640px; margin:0 auto; font-size:1.05rem; }
 
-  /* Page intro */
-  .intro { margin-bottom: 40px; }
-  .intro h1 {
-    font-size: clamp(30px, 4vw, 40px);
-    font-weight: 800; letter-spacing: -0.03em; line-height: 1.05;
-    margin: 0 0 12px; color: var(--ink); text-wrap: balance;
-  }
-  .intro h1 em { color: var(--brand); font-style: normal; }
-  .intro p {
-    color: var(--ink-soft); font-size: 16px; margin: 0; max-width: 60ch;
-  }
+    /* Wizard container */
+    .wrap { max-width: 900px; margin: 0 auto; padding: 24px 20px 64px; }
 
-  /* Progress ribbon */
-  .progress {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
-    margin-bottom: 36px; padding: 4px;
-    background: var(--surface); border-radius: var(--radius);
-    box-shadow: var(--shadow-sm); border: 1px solid var(--hairline);
-  }
-  .progress-step {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 10px 6px; border-radius: 6px;
-    font-size: 12px; color: var(--muted);
-    font-weight: 600; letter-spacing: .02em;
-  }
-  .progress-step .n {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 22px; height: 22px; border-radius: 999px;
-    background: var(--hairline); color: var(--ink-soft);
-    font-weight: 700; font-size: 12px;
-  }
-  .progress-step.done .n { background: var(--good); color: #fff; }
-  .progress-step.active { color: var(--ink); }
-  .progress-step.active .n { background: var(--brand); color: #fff; }
-  @media (max-width: 640px) {
-    .progress-step .label { display: none; }
-    .progress-step { padding: 10px 4px; }
-  }
+    /* Progress ribbon */
+    .progress { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; margin: -18px auto 32px; padding:4px; background:var(--surface); border-radius:10px; box-shadow: 0 8px 24px -12px rgba(0,30,120,.25); border:1px solid var(--hairline); position:relative; z-index:2; }
+    .progress-step { display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 6px; border-radius:6px; font-size:12px; color:var(--muted); font-weight:600; letter-spacing:.02em; }
+    .progress-step .n { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:999px; background:var(--hairline); color:var(--ink-soft); font-weight:700; font-size:12px; }
+    .progress-step.done .n { background:var(--good); color:#fff; }
+    .progress-step.active { color:var(--ink); }
+    .progress-step.active .n { background:var(--lit-blue); color:#fff; }
+    @media (max-width:640px) { .progress-step .label { display:none; } .progress-step { padding:10px 4px; } }
 
-  /* Step card */
-  .step {
-    background: var(--surface); border: 1px solid var(--hairline);
-    border-radius: var(--radius-lg); padding: 28px; margin-bottom: 20px;
-    box-shadow: var(--shadow-md);
-  }
-  .step-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 20px; }
-  .step-num {
-    font-weight: 800; font-size: 44px; line-height: 0.9;
-    letter-spacing: -0.04em; color: var(--brand);
-    font-variant-numeric: tabular-nums;
-  }
-  .step-title h2 {
-    margin: 0 0 4px; font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--ink);
-  }
-  .step-title p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+    /* Step card */
+    .step { background:var(--surface); border:1px solid var(--hairline); border-radius:16px; padding:28px; margin-bottom:20px; box-shadow: 0 4px 12px rgba(15,20,40,.06), 0 1px 3px rgba(15,20,40,.04); }
+    .step-head { display:flex; align-items:baseline; gap:16px; margin-bottom:20px; }
+    .step-num { font-weight:800; font-size:44px; line-height:.9; letter-spacing:-.04em; color:var(--lit-blue); font-variant-numeric:tabular-nums; }
+    .step-title h2 { margin:0 0 4px; font-size:22px; font-weight:700; letter-spacing:-.01em; color:var(--ink); font-family:'Nunito', sans-serif; }
+    .step-title p { margin:0; color:var(--ink-soft); font-size:14px; }
 
-  /* Category subheader within a step */
-  .cat-head {
-    font-size: 11px; font-weight: 800; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--muted);
-    margin: 22px 0 10px; padding-top: 14px;
-    border-top: 1px dashed var(--hairline);
-  }
-  .cat-head:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+    .cat-head { font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin: 22px 0 10px; padding-top:14px; border-top:1px dashed var(--hairline); }
+    .cat-head:first-of-type { margin-top:0; padding-top:0; border-top:none; }
 
-  /* Option grid */
-  .options {
-    display: grid; gap: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
-  }
-  .opt {
-    position: relative; padding: 14px 16px;
-    background: var(--surface); border: 1.5px solid var(--hairline);
-    border-radius: var(--radius); cursor: pointer;
-    transition: border-color .15s, background .15s, transform .1s;
-    text-align: left; font: inherit;
-  }
-  .opt:hover { border-color: var(--brand); transform: translateY(-1px); }
-  .opt.selected {
-    border-color: var(--brand);
-    background: var(--brand-soft);
-    border-style: dashed;    /* the embroidery-stitch nod */
-  }
-  .opt.selected::after {
-    content: "";
-    position: absolute; top: 12px; right: 12px;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: var(--brand);
-    box-shadow: inset 0 0 0 3px var(--brand-soft), 0 0 0 1px var(--brand);
-  }
-  .opt-title {
-    font-weight: 700; font-size: 15px; color: var(--ink);
-    display: flex; align-items: center; gap: 8px; padding-right: 24px;
-  }
-  .opt-brand { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 2px; letter-spacing: .01em; }
-  .opt-hint { font-size: 12px; color: var(--ink-soft); margin-top: 6px; line-height: 1.4; }
-  .opt-tier {
-    display: inline-flex; align-items: center;
-    font-size: 9px; font-weight: 800; letter-spacing: .09em;
-    text-transform: uppercase; padding: 2px 7px;
-    border-radius: 4px;
-    background: var(--tier-basic-soft); color: var(--tier-basic);
-  }
-  .opt-tier[data-tier="premium"] { background: var(--tier-premium-soft); color: var(--tier-premium); }
-  .opt-tier[data-tier="pro"]     { background: var(--tier-pro-soft);     color: var(--tier-pro); }
+    .options { display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); }
+    .opt { position:relative; padding:14px 16px; background:var(--surface); border:1.5px solid var(--hairline); border-radius:10px; cursor:pointer; transition:border-color .15s, background .15s, transform .1s; text-align:left; font:inherit; }
+    .opt:hover { border-color:var(--lit-blue); transform:translateY(-1px); }
+    .opt.selected { border-color:var(--lit-blue); background:var(--brand-soft); border-style:dashed; }
+    .opt.selected::after { content:""; position:absolute; top:12px; right:12px; width:16px; height:16px; border-radius:50%; background:var(--lit-blue); box-shadow: inset 0 0 0 3px var(--brand-soft), 0 0 0 1px var(--lit-blue); }
+    .opt-title { font-weight:700; font-size:15px; color:var(--ink); display:flex; align-items:center; gap:8px; padding-right:24px; }
+    .opt-brand { font-size:11px; color:var(--muted); font-weight:500; margin-top:2px; }
+    .opt-hint { font-size:12px; color:var(--ink-soft); margin-top:6px; line-height:1.4; }
+    .opt-tier { display:inline-flex; align-items:center; font-size:9px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; padding:2px 7px; border-radius:4px; background:var(--tier-basic-soft); color:var(--tier-basic); }
+    .opt-tier[data-tier="premium"] { background:var(--tier-premium-soft); color:var(--tier-premium); }
+    .opt-tier[data-tier="pro"]     { background:var(--tier-pro-soft);     color:var(--tier-pro); }
 
-  /* Colors */
-  .subhead {
-    font-size: 12px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: .08em; font-weight: 700;
-    margin: 20px 0 12px;
-  }
-  .subhead:first-child { margin-top: 0; }
-  .colors { display: flex; gap: 12px; flex-wrap: wrap; }
-  .swatch {
-    cursor: pointer; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-  }
-  .swatch-chip {
-    width: 44px; height: 44px; border-radius: 50%;
-    box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, .08), var(--shadow-sm);
-    transition: transform .1s;
-  }
-  .swatch:hover .swatch-chip { transform: scale(1.06); }
-  .swatch.selected .swatch-chip {
-    box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, .08),
-                0 0 0 3px var(--surface), 0 0 0 5px var(--brand);
-  }
-  .swatch-label { font-size: 12px; color: var(--ink-soft); }
+    .subhead { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-weight:700; margin:20px 0 12px; }
+    .subhead:first-child { margin-top:0; }
 
-  /* Sizes */
-  .sizes {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 8px;
-  }
-  .size-cell {
-    background: var(--surface-alt); border: 1px solid var(--hairline); border-radius: 8px;
-    padding: 10px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;
-  }
-  .size-cell label { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
-  .size-cell input {
-    width: 100%; border: none; background: transparent; text-align: center;
-    font-size: 15px; font-weight: 600; color: var(--ink); padding: 4px 0;
-    font-variant-numeric: tabular-nums; outline: none;
-  }
-  .size-cell:focus-within { border-color: var(--brand); background: var(--surface); }
+    .colors { display:flex; gap:12px; flex-wrap:wrap; }
+    .swatch { cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; }
+    .swatch-chip { width:44px; height:44px; border-radius:50%; box-shadow: inset 0 0 0 1.5px rgba(0,0,0,.08), 0 1px 2px rgba(15,20,40,.05); transition:transform .1s; }
+    .swatch:hover .swatch-chip { transform:scale(1.06); }
+    .swatch.selected .swatch-chip { box-shadow: inset 0 0 0 1.5px rgba(0,0,0,.08), 0 0 0 3px var(--surface), 0 0 0 5px var(--lit-blue); }
+    .swatch-label { font-size:12px; color:var(--ink-soft); }
 
-  /* Customization — method chooser */
-  .method-row {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px;
-  }
+    .sizes { display:grid; grid-template-columns:repeat(auto-fit,minmax(72px,1fr)); gap:8px; }
+    .size-cell { background:var(--surface-alt); border:1px solid var(--hairline); border-radius:8px; padding:10px 8px; display:flex; flex-direction:column; align-items:center; gap:4px; }
+    .size-cell label { font-size:12px; font-weight:700; color:var(--ink-soft); }
+    .size-cell input { width:100%; border:none; background:transparent; text-align:center; font-size:15px; font-weight:600; color:var(--ink); padding:4px 0; font-variant-numeric:tabular-nums; outline:none; font-family:inherit; }
+    .size-cell:focus-within { border-color:var(--lit-blue); background:var(--surface); }
 
-  /* Placement grid with prices */
-  .place-list { display: grid; gap: 8px; }
-  .place-row {
-    display: grid; grid-template-columns: 1fr auto;
-    align-items: center; gap: 12px;
-    padding: 12px 14px; border-radius: 8px;
-    background: var(--surface-alt); border: 1px solid var(--hairline);
-    cursor: pointer;
-    transition: background .12s, border-color .12s;
-  }
-  .place-row:hover { border-color: var(--brand); }
-  .place-row.selected { background: var(--brand-soft); border-color: var(--brand); border-style: dashed; }
-  .place-name { font-weight: 600; color: var(--ink); }
-  .place-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .place-price {
-    font-weight: 700; color: var(--brand); font-size: 14px; white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
+    .method-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
 
-  .note {
-    font-size: 12px; color: var(--muted);
-    padding: 10px 12px; background: var(--surface-alt);
-    border-left: 3px solid var(--brand); border-radius: 4px;
-    margin-top: 14px;
-  }
+    .place-list { display:grid; gap:8px; }
+    .place-row { display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; padding:12px 14px; border-radius:8px; background:var(--surface-alt); border:1px solid var(--hairline); cursor:pointer; text-align:left; font:inherit; transition: background .12s, border-color .12s; }
+    .place-row:hover { border-color:var(--lit-blue); }
+    .place-row.selected { background:var(--brand-soft); border-color:var(--lit-blue); border-style:dashed; }
+    .place-name { font-weight:600; color:var(--ink); }
+    .place-detail { font-size:12px; color:var(--muted); margin-top:2px; }
+    .place-price { font-weight:700; color:var(--lit-blue); font-size:14px; white-space:nowrap; font-variant-numeric:tabular-nums; }
 
-  /* Quantity step */
-  .qty-row {
-    display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
-    background: var(--surface-alt); padding: 14px 18px;
-    border-radius: var(--radius); border: 1px solid var(--hairline);
-  }
-  .qty-btn {
-    width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--hairline);
-    background: var(--surface); font-size: 20px; font-weight: 700; color: var(--brand);
-    cursor: pointer;
-  }
-  .qty-btn:hover { border-color: var(--brand); }
-  .qty-val {
-    flex: 1; text-align: center; font-size: 40px; font-weight: 800;
-    color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
-  }
-  .qty-tiers {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-    font-size: 12px; color: var(--ink-soft);
-  }
-  .tier {
-    padding: 10px 12px; border-radius: 8px;
-    background: var(--surface-alt); text-align: center; border: 1px solid var(--hairline);
-  }
-  .tier.active { background: var(--brand-soft); border-color: var(--brand); color: var(--ink); }
-  .tier b { display: block; color: var(--brand); font-size: 14px; margin-bottom: 2px; }
+    .note { font-size:12px; color:var(--muted); padding:10px 12px; background:var(--surface-alt); border-left:3px solid var(--lit-blue); border-radius:4px; margin-top:14px; }
 
-  /* Form step */
-  .form-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-  }
-  .form-grid label { display: block; grid-column: span 1; }
-  .form-grid .full { grid-column: 1 / -1; }
-  .form-grid .lbl {
-    display: block; font-size: 12px; font-weight: 700; color: var(--ink-soft);
-    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px;
-  }
-  .form-grid input, .form-grid textarea {
-    width: 100%; padding: 12px 14px; border: 1.5px solid var(--hairline);
-    background: var(--surface); border-radius: 8px; font: inherit; color: var(--ink);
-    transition: border-color .15s;
-  }
-  .form-grid input:focus, .form-grid textarea:focus {
-    outline: none; border-color: var(--brand);
-  }
-  .form-grid textarea { min-height: 90px; resize: vertical; }
-  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+    .qty-row { display:flex; align-items:center; gap:16px; margin-bottom:16px; background:var(--surface-alt); padding:14px 18px; border-radius:10px; border:1px solid var(--hairline); }
+    .qty-btn { width:40px; height:40px; border-radius:8px; border:1px solid var(--hairline); background:var(--surface); font-size:20px; font-weight:700; color:var(--lit-blue); cursor:pointer; font-family:inherit; }
+    .qty-btn:hover { border-color:var(--lit-blue); }
+    .qty-val { flex:1; text-align:center; font-size:40px; font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+    .qty-tiers { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; font-size:12px; color:var(--ink-soft); }
+    .tier { padding:10px 12px; border-radius:8px; background:var(--surface-alt); text-align:center; border:1px solid var(--hairline); }
+    .tier.active { background:var(--brand-soft); border-color:var(--lit-blue); color:var(--ink); }
+    .tier b { display:block; color:var(--lit-blue); font-size:14px; margin-bottom:2px; }
 
-  /* CTA */
-  .cta-row { display: flex; align-items: center; gap: 16px; margin-top: 22px; flex-wrap: wrap; }
-  .cta {
-    background: var(--accent); color: #fff; border: none;
-    padding: 14px 28px; font: inherit; font-weight: 700; font-size: 16px;
-    border-radius: 999px; cursor: pointer;
-    box-shadow: 0 6px 18px -4px rgba(240, 150, 0, .5);
-    transition: transform .1s, box-shadow .15s;
-    letter-spacing: .01em;
-  }
-  .cta:hover { transform: translateY(-1px); box-shadow: 0 10px 22px -4px rgba(240, 150, 0, .6); }
-  .cta-note { color: var(--muted); font-size: 13px; }
-  .cta-note b { color: var(--brand); }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-grid label { display:block; }
+    .form-grid .full { grid-column:1/-1; }
+    .form-grid .lbl { display:block; font-size:12px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
+    .form-grid input, .form-grid textarea { width:100%; padding:12px 14px; border:1.5px solid var(--hairline); background:var(--surface); border-radius:8px; font:inherit; color:var(--ink); transition:border-color .15s; }
+    .form-grid input:focus, .form-grid textarea:focus { outline:none; border-color:var(--lit-blue); }
+    .form-grid textarea { min-height:90px; resize:vertical; }
+    @media (max-width:640px) { .form-grid { grid-template-columns:1fr; } }
 
-  /* Toast */
-  .toast {
-    position: fixed; bottom: 24px; left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--ink); color: var(--ground);
-    padding: 12px 20px; border-radius: 999px;
-    font-size: 14px; font-weight: 600;
-    box-shadow: var(--shadow-lg);
-    transition: transform .3s cubic-bezier(.2,.9,.3,1.2);
-    z-index: 100; max-width: calc(100% - 40px);
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-</style>
+    .cta-row { display:flex; align-items:center; gap:16px; margin-top:22px; flex-wrap:wrap; }
+    .cta { background:linear-gradient(90deg,var(--lit-orange),var(--lit-flame) 55%,var(--lit-pink)); color:#fff; border:none; padding:14px 28px; font:inherit; font-weight:700; font-size:16px; border-radius:999px; cursor:pointer; box-shadow:0 6px 18px -4px rgba(240,150,0,.5); transition:transform .1s, box-shadow .15s; letter-spacing:.01em; }
+    .cta:hover { transform:translateY(-1px); box-shadow:0 10px 22px -4px rgba(240,90,60,.55); }
+    .cta:disabled { opacity:.6; cursor:default; transform:none; }
+    .cta-note { color:var(--muted); font-size:13px; }
+    .cta-note b { color:var(--lit-blue); }
 
+    /* Status */
+    .status { margin-top:14px; padding:12px 16px; border-radius:8px; font-weight:600; font-size:14px; display:none; }
+    .status.ok { display:block; background:#dcfce7; color:#14532d; border:1px solid #86efac; }
+    .status.err { display:block; background:#fee2e2; color:#7f1d1d; border:1px solid #fca5a5; }
+
+    /* Footer */
+    .lit-footer { background:#0b1220; color:rgba(255,255,255,.82); padding:2.5rem 1.25rem 2rem; margin-top:3rem; }
+    .lit-footer-inner { max-width:1152px; margin:0 auto; display:grid; gap:1.5rem; grid-template-columns:1fr; }
+    @media (min-width:800px) { .lit-footer-inner { grid-template-columns:1.3fr 1fr 1fr; } }
+    .lit-footer h4 { color:#fff; font-weight:800; font-size:.95rem; margin:0 0 .6rem; letter-spacing:.03em; text-transform:uppercase; }
+    .lit-footer a { color:rgba(255,255,255,.82); text-decoration:none; display:block; margin:.25rem 0; }
+    .lit-footer a:hover { color:#fff; }
+    .lit-footer-bottom { max-width:1152px; margin:2rem auto 0; padding-top:1.25rem; border-top:1px solid rgba(255,255,255,.08); color:rgba(255,255,255,.55); font-size:.85rem; text-align:center; }
+  </style>
+</head>
 <body>
+
+<!-- SAME NAV AS BLOG PAGES -->
+<header class="lit-nav">
+  <div class="lit-nav-inner">
+    <a href="/" class="lit-brand">
+      <img src="/assets/img/ChatGPT-Image-Apr-23-2026-01_50_45-PM.png" alt="Lakeside Ink &amp; Threadz"/>
+      <span>Lakeside Ink &amp; Threadz</span>
+    </a>
+    <nav class="lit-links" aria-label="Primary">
+      <a href="/services/">Services</a>
+      <a href="/gallery/">Gallery</a>
+      <a href="/business-orders/">Business Orders</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contact/">Contact</a>
+      <a href="/quote/" class="lit-cta-nav">Get a Quote</a>
+    </nav>
+  </div>
+</header>
+
+<div class="preview-note">
+  <strong>Preview</strong> &nbsp;·&nbsp; This is a working draft of a new 5-step quote flow. Submissions email hello@lakesidethreadz.com just like the real form does.
+</div>
+
+<section class="lit-hero">
+  <div class="lit-hero-inner">
+    <h1>Let's get you a real quote</h1>
+    <p>Five quick picks. No account, no minimums. Kristen writes every reply by hand — usually same day, always within one business day.</p>
+  </div>
+</section>
+
 <div class="wrap">
-  <div class="preview-note">
-    <strong>Mockup</strong> &nbsp;·&nbsp; Click through it to feel the flow. Nothing sends. Everything is placeholder.
-  </div>
-
-  <header class="brand-header">
-    <div class="brand-lockup">
-      <div class="brand-name">LAKESIDE<span> INK &amp; THREADZ</span></div>
-      <div class="brand-tag">Livingston, TX &nbsp;·&nbsp; est. 2020</div>
-    </div>
-    <a href="#" class="brand-phone">(346) 988-5449</a>
-  </header>
-
-  <div class="intro">
-    <h1>Let's get you a <em>real quote</em>, in one business day.</h1>
-    <p>Five quick picks. No account, no minimums. Kristen writes every quote by hand — usually same day, always within one business day.</p>
-  </div>
-
   <nav class="progress" aria-label="Quote steps">
     <div class="progress-step active" data-step="1"><span class="n">1</span><span class="label">Apparel</span></div>
     <div class="progress-step" data-step="2"><span class="n">2</span><span class="label">Color &amp; size</span></div>
@@ -403,88 +188,88 @@
     <div class="progress-step" data-step="5"><span class="n">5</span><span class="label">Send it</span></div>
   </nav>
 
-  <!-- STEP 1 — 12 launch items grouped by category, each with a tier badge -->
+  <!-- STEP 1 -->
   <section class="step" data-step="1">
     <div class="step-head">
       <div class="step-num">01</div>
       <div class="step-title">
         <h2>Pick your garment</h2>
-        <p>Twelve everyday favorites. Tiers tell you the price feel — <b>Basic</b> workhorse, <b>Premium</b> everyday, <b>Pro</b> performance &amp; workwear.</p>
+        <p>Twelve everyday favorites. Tiers tell you the price feel &mdash; <b>Basic</b> workhorse, <b>Premium</b> everyday, <b>Pro</b> performance &amp; workwear.</p>
       </div>
     </div>
 
     <div class="cat-head">Shirts</div>
     <div class="options" data-group="apparel">
-      <button class="opt" data-value="bella-3001">
+      <button class="opt" data-value="Bella+Canvas 3001 · Premium Jersey Tee">
         <div class="opt-title">Premium Jersey Tee <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Bella + Canvas · 3001</div>
+        <div class="opt-brand">Bella + Canvas &middot; 3001</div>
         <div class="opt-hint">Soft, lightweight, ideal for DTF prints.</div>
       </button>
-      <button class="opt" data-value="gildan-5000">
+      <button class="opt" data-value="Gildan 5000 · Heavy Cotton Tee">
         <div class="opt-title">Heavy Cotton Tee <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-brand">Gildan · 5000</div>
+        <div class="opt-brand">Gildan &middot; 5000</div>
         <div class="opt-hint">Budget workhorse. Great for work crews.</div>
       </button>
-      <button class="opt" data-value="gildan-64000">
+      <button class="opt" data-value="Gildan 64000 · Softstyle Tee">
         <div class="opt-title">Softstyle Tee <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-brand">Gildan · 64000</div>
+        <div class="opt-brand">Gildan &middot; 64000</div>
         <div class="opt-hint">Softer, slightly upgraded feel.</div>
       </button>
-      <button class="opt" data-value="champion-t525c">
+      <button class="opt" data-value="Champion T525C · Champion Tee">
         <div class="opt-title">Champion Tee <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Champion · T525C</div>
+        <div class="opt-brand">Champion &middot; T525C</div>
         <div class="opt-hint">Recognizable brand. DTF-certified.</div>
       </button>
     </div>
 
     <div class="cat-head">Hoodies &amp; sweatshirts</div>
     <div class="options" data-group="apparel">
-      <button class="opt" data-value="gildan-18500">
+      <button class="opt" data-value="Gildan 18500 · Heavy Blend Hoodie">
         <div class="opt-title">Heavy Blend Hoodie <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-brand">Gildan · 18500</div>
+        <div class="opt-brand">Gildan &middot; 18500</div>
         <div class="opt-hint">Affordable, everybody-knows-it hoodie.</div>
       </button>
-      <button class="opt" data-value="bella-3719">
+      <button class="opt" data-value="Bella+Canvas 3719 · Sponge Fleece Hoodie">
         <div class="opt-title">Sponge Fleece Hoodie <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Bella + Canvas · 3719</div>
+        <div class="opt-brand">Bella + Canvas &middot; 3719</div>
         <div class="opt-hint">Boutique-quality pullover.</div>
       </button>
-      <button class="opt" data-value="bella-4719">
+      <button class="opt" data-value="Bella+Canvas 4719 · Heavyweight Luxury Hoodie">
         <div class="opt-title">Heavyweight Luxury Hoodie <span class="opt-tier" data-tier="pro">Pro</span></div>
-        <div class="opt-brand">Bella + Canvas · 4719</div>
+        <div class="opt-brand">Bella + Canvas &middot; 4719</div>
         <div class="opt-hint">10 oz. Premium price, premium feel.</div>
       </button>
-      <button class="opt" data-value="gildan-18000">
+      <button class="opt" data-value="Gildan 18000 · Crewneck Sweatshirt">
         <div class="opt-title">Crewneck Sweatshirt <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-brand">Gildan · 18000</div>
+        <div class="opt-brand">Gildan &middot; 18000</div>
         <div class="opt-hint">Classic pullover crewneck.</div>
       </button>
     </div>
 
     <div class="cat-head">Performance &amp; work</div>
     <div class="options" data-group="apparel">
-      <button class="opt" data-value="core-88181">
+      <button class="opt" data-value="Core 365 88181 · Performance Polo">
         <div class="opt-title">Performance Polo <span class="opt-tier" data-tier="pro">Pro</span></div>
-        <div class="opt-brand">Core 365 · 88181</div>
+        <div class="opt-brand">Core 365 &middot; 88181</div>
         <div class="opt-hint">Moisture-wicking, UV. Business favorite.</div>
       </button>
-      <button class="opt" data-value="gildan-g465">
+      <button class="opt" data-value="Gildan G465 · Performance Hooded Tee">
         <div class="opt-title">Performance Hooded Tee <span class="opt-tier" data-tier="pro">Pro</span></div>
-        <div class="opt-brand">Gildan · G465</div>
+        <div class="opt-brand">Gildan &middot; G465</div>
         <div class="opt-hint">Lake Livingston go-to. Fishing/outdoor.</div>
       </button>
     </div>
 
     <div class="cat-head">Headwear &amp; women's</div>
     <div class="options" data-group="apparel">
-      <button class="opt" data-value="richardson-112">
+      <button class="opt" data-value="Richardson 112 (or 115) · Trucker Hat">
         <div class="opt-title">Trucker Hat <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Richardson · 112 (or 115 low-profile)</div>
+        <div class="opt-brand">Richardson &middot; 112 (or 115 low-profile)</div>
         <div class="opt-hint">The hat everyone actually asks for.</div>
       </button>
-      <button class="opt" data-value="bella-b7502">
+      <button class="opt" data-value="Bella+Canvas B7502 · Women's Cropped Hoodie">
         <div class="opt-title">Women's Cropped Hoodie <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Bella + Canvas · B7502</div>
+        <div class="opt-brand">Bella + Canvas &middot; B7502</div>
         <div class="opt-hint">Boutique look, not a sea of unisex.</div>
       </button>
     </div>
@@ -499,32 +284,30 @@
         <p>Pick a color, then punch in roughly how many of each size. It doesn't have to be exact.</p>
       </div>
     </div>
-
     <div class="subhead">Color</div>
     <div class="colors" data-group="color">
-      <div class="swatch" data-value="navy"><div class="swatch-chip" style="background:#1A2340"></div><div class="swatch-label">Navy</div></div>
-      <div class="swatch" data-value="black"><div class="swatch-chip" style="background:#111"></div><div class="swatch-label">Black</div></div>
-      <div class="swatch" data-value="white"><div class="swatch-chip" style="background:#F5F5F0"></div><div class="swatch-label">White</div></div>
-      <div class="swatch" data-value="heather"><div class="swatch-chip" style="background:#95989E"></div><div class="swatch-label">Heather Grey</div></div>
-      <div class="swatch" data-value="kelly"><div class="swatch-chip" style="background:#1F7A3F"></div><div class="swatch-label">Kelly Green</div></div>
-      <div class="swatch" data-value="red"><div class="swatch-chip" style="background:#B21F2A"></div><div class="swatch-label">Red</div></div>
-      <div class="swatch" data-value="charcoal"><div class="swatch-chip" style="background:#3B3F47"></div><div class="swatch-label">Charcoal</div></div>
-      <div class="swatch" data-value="royal"><div class="swatch-chip" style="background:#1D3E8C"></div><div class="swatch-label">Royal Blue</div></div>
+      <div class="swatch" data-value="Navy"><div class="swatch-chip" style="background:#1A2340"></div><div class="swatch-label">Navy</div></div>
+      <div class="swatch" data-value="Black"><div class="swatch-chip" style="background:#111"></div><div class="swatch-label">Black</div></div>
+      <div class="swatch" data-value="White"><div class="swatch-chip" style="background:#F5F5F0"></div><div class="swatch-label">White</div></div>
+      <div class="swatch" data-value="Heather Grey"><div class="swatch-chip" style="background:#95989E"></div><div class="swatch-label">Heather Grey</div></div>
+      <div class="swatch" data-value="Kelly Green"><div class="swatch-chip" style="background:#1F7A3F"></div><div class="swatch-label">Kelly Green</div></div>
+      <div class="swatch" data-value="Red"><div class="swatch-chip" style="background:#B21F2A"></div><div class="swatch-label">Red</div></div>
+      <div class="swatch" data-value="Charcoal"><div class="swatch-chip" style="background:#3B3F47"></div><div class="swatch-label">Charcoal</div></div>
+      <div class="swatch" data-value="Royal Blue"><div class="swatch-chip" style="background:#1D3E8C"></div><div class="swatch-label">Royal Blue</div></div>
     </div>
-
     <div class="subhead">Sizes &amp; quantities</div>
     <div class="sizes">
-      <div class="size-cell"><label>XS</label><input type="number" min="0" placeholder="0"></div>
-      <div class="size-cell"><label>S</label><input type="number" min="0" placeholder="0"></div>
-      <div class="size-cell"><label>M</label><input type="number" min="0" placeholder="0"></div>
-      <div class="size-cell"><label>L</label><input type="number" min="0" placeholder="0"></div>
-      <div class="size-cell"><label>XL</label><input type="number" min="0" placeholder="0"></div>
-      <div class="size-cell"><label>2XL</label><input type="number" min="0" placeholder="0"></div>
-      <div class="size-cell"><label>3XL</label><input type="number" min="0" placeholder="0"></div>
+      <div class="size-cell"><label>XS</label><input type="number" min="0" placeholder="0" data-size="XS"></div>
+      <div class="size-cell"><label>S</label><input type="number" min="0" placeholder="0" data-size="S"></div>
+      <div class="size-cell"><label>M</label><input type="number" min="0" placeholder="0" data-size="M"></div>
+      <div class="size-cell"><label>L</label><input type="number" min="0" placeholder="0" data-size="L"></div>
+      <div class="size-cell"><label>XL</label><input type="number" min="0" placeholder="0" data-size="XL"></div>
+      <div class="size-cell"><label>2XL</label><input type="number" min="0" placeholder="0" data-size="2XL"></div>
+      <div class="size-cell"><label>3XL</label><input type="number" min="0" placeholder="0" data-size="3XL"></div>
     </div>
   </section>
 
-  <!-- STEP 3 — method + placements with real pricing -->
+  <!-- STEP 3 -->
   <section class="step" data-step="3">
     <div class="step-head">
       <div class="step-num">03</div>
@@ -533,77 +316,23 @@
         <p>Pick a method, then the placement. Prices are add-ons per piece.</p>
       </div>
     </div>
-
     <div class="subhead">Method</div>
     <div class="options method-row" data-group="method">
-      <button class="opt" data-value="dtf">
-        <div class="opt-title">DTF Print</div>
-        <div class="opt-hint">Full-color, photo-quality. Sharp gradients.</div>
-      </button>
-      <button class="opt" data-value="embroidery">
-        <div class="opt-title">Embroidery</div>
-        <div class="opt-hint">Classic stitched look. Best for polos, hats, uniforms.</div>
-      </button>
-      <button class="opt" data-value="both">
-        <div class="opt-title">Both</div>
-        <div class="opt-hint">Front + back, mixed placements — Kristen'll advise.</div>
-      </button>
+      <button class="opt" data-value="DTF Print"><div class="opt-title">DTF Print</div><div class="opt-hint">Full-color, photo-quality. Sharp gradients.</div></button>
+      <button class="opt" data-value="Embroidery"><div class="opt-title">Embroidery</div><div class="opt-hint">Classic stitched look. Best for polos, hats, uniforms.</div></button>
+      <button class="opt" data-value="DTF + Embroidery"><div class="opt-title">Both</div><div class="opt-hint">Front + back, mixed placements &mdash; Kristen'll advise.</div></button>
     </div>
-
     <div class="subhead">Placement</div>
     <div class="place-list" data-group="placement">
-      <button class="place-row" data-value="chest-small">
-        <div>
-          <div class="place-name">Small left chest</div>
-          <div class="place-detail">Logo pocket-size. Clean, understated.</div>
-        </div>
-        <div class="place-price">+ $8 – 15</div>
-      </button>
-      <button class="place-row" data-value="chest-standard">
-        <div>
-          <div class="place-name">Standard front</div>
-          <div class="place-detail">Center chest, medium logo or text.</div>
-        </div>
-        <div class="place-price">+ $10 – 12</div>
-      </button>
-      <button class="place-row" data-value="front-large">
-        <div>
-          <div class="place-name">Large full front</div>
-          <div class="place-detail">Bold graphic across most of the shirt.</div>
-        </div>
-        <div class="place-price">+ $12 – 15</div>
-      </button>
-      <button class="place-row" data-value="back-full">
-        <div>
-          <div class="place-name">Full back</div>
-          <div class="place-detail">Team names, company URL, big art.</div>
-        </div>
-        <div class="place-price">+ $12 – 18</div>
-      </button>
-      <button class="place-row" data-value="sleeve">
-        <div>
-          <div class="place-name">Sleeve</div>
-          <div class="place-detail">Small mark on the arm. Paired with a front print.</div>
-        </div>
-        <div class="place-price">+ $7 – 10</div>
-      </button>
-      <button class="place-row" data-value="hat">
-        <div>
-          <div class="place-name">Hat front (embroidered)</div>
-          <div class="place-detail">Simple $15–20 · detailed $20–30 · 3D puff $25–35.</div>
-        </div>
-        <div class="place-price">+ $15 – 35</div>
-      </button>
-      <button class="place-row" data-value="names">
-        <div>
-          <div class="place-name">Individual names / numbers</div>
-          <div class="place-detail">Add-on. Roster, crew, team.</div>
-        </div>
-        <div class="place-price">+ $3 / piece</div>
-      </button>
+      <button class="place-row" data-value="Small left chest (+$8–15)"><div><div class="place-name">Small left chest</div><div class="place-detail">Logo pocket-size. Clean, understated.</div></div><div class="place-price">+ $8 – 15</div></button>
+      <button class="place-row" data-value="Standard front (+$10–12)"><div><div class="place-name">Standard front</div><div class="place-detail">Center chest, medium logo or text.</div></div><div class="place-price">+ $10 – 12</div></button>
+      <button class="place-row" data-value="Large full front (+$12–15)"><div><div class="place-name">Large full front</div><div class="place-detail">Bold graphic across most of the shirt.</div></div><div class="place-price">+ $12 – 15</div></button>
+      <button class="place-row" data-value="Full back (+$12–18)"><div><div class="place-name">Full back</div><div class="place-detail">Team names, company URL, big art.</div></div><div class="place-price">+ $12 – 18</div></button>
+      <button class="place-row" data-value="Sleeve (+$7–10)"><div><div class="place-name">Sleeve</div><div class="place-detail">Small mark on the arm. Paired with a front print.</div></div><div class="place-price">+ $7 – 10</div></button>
+      <button class="place-row" data-value="Hat front, embroidered (+$15–35)"><div><div class="place-name">Hat front (embroidered)</div><div class="place-detail">Simple $15–20 · detailed $20–30 · 3D puff $25–35.</div></div><div class="place-price">+ $15 – 35</div></button>
+      <button class="place-row" data-value="Individual names/numbers (+$3/pc)"><div><div class="place-name">Individual names / numbers</div><div class="place-detail">Add-on. Roster, crew, team.</div></div><div class="place-price">+ $3 / piece</div></button>
     </div>
-
-    <p class="note"><b>Heads up:</b> a one-time $25 digitizing fee applies to new embroidery designs — that's setup, not per-piece. Reused designs skip it.</p>
+    <p class="note"><b>Heads up:</b> a one-time $25 digitizing fee applies to new embroidery designs &mdash; that's setup, not per-piece. Reused designs skip it.</p>
   </section>
 
   <!-- STEP 4 -->
@@ -612,7 +341,7 @@
       <div class="step-num">04</div>
       <div class="step-title">
         <h2>Roughly how many?</h2>
-        <p>Ballpark is fine — Kristen will confirm on the way to a real number.</p>
+        <p>Ballpark is fine &mdash; Kristen will confirm on the way to a real number.</p>
       </div>
     </div>
     <div class="qty-row">
@@ -636,62 +365,77 @@
         <p>Reply lands in your inbox usually within a few hours, always inside one business day.</p>
       </div>
     </div>
-    <div class="form-grid">
-      <label>
-        <span class="lbl">Your name</span>
-        <input type="text" placeholder="First and last">
-      </label>
-      <label>
-        <span class="lbl">Phone (optional)</span>
-        <input type="tel" placeholder="(555) 123-4567">
-      </label>
-      <label class="full">
-        <span class="lbl">Email</span>
-        <input type="email" placeholder="you@business.com">
-      </label>
-      <label class="full">
-        <span class="lbl">Anything else? (deadline, logo file, questions)</span>
-        <textarea placeholder="e.g. Need them by our chamber lunch on the 22nd. Logo attached separately."></textarea>
-      </label>
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="submit-btn">Send my quote request</button>
-      <span class="cta-note">Or call / text Kristen: <b>(346) 988-5449</b></span>
-    </div>
+    <form id="quote-form">
+      <div class="form-grid">
+        <label><span class="lbl">Your name *</span><input type="text" name="name" placeholder="First and last" required></label>
+        <label><span class="lbl">Phone (optional)</span><input type="tel" name="phone" placeholder="(555) 123-4567"></label>
+        <label class="full"><span class="lbl">Email *</span><input type="email" name="email" placeholder="you@business.com" required></label>
+        <label class="full"><span class="lbl">Anything else? (deadline, logo file, questions)</span><textarea name="notes" placeholder="e.g. Need them by our chamber lunch on the 22nd. Logo attached separately."></textarea></label>
+        <!-- honeypot -->
+        <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden" aria-hidden="true">
+      </div>
+      <div class="cta-row">
+        <button type="submit" class="cta" id="submit-btn">Send my quote request</button>
+        <span class="cta-note">Or call / text Kristen: <b>(346) 988-5449</b></span>
+      </div>
+      <div class="status" id="status"></div>
+    </form>
   </section>
 </div>
 
-<div class="toast" id="toast">Preview only — nothing sent</div>
+<footer class="lit-footer">
+  <div class="lit-footer-inner">
+    <div>
+      <h4>Lakeside Ink &amp; Threadz</h4>
+      <p style="margin:.25rem 0 .75rem;">Custom embroidery, DTF printing, and branded apparel &mdash; right here on Lake Livingston.</p>
+      <p style="margin:0;color:rgba(255,255,255,.7);">Twin Creeks Dr, Livingston, TX 77351</p>
+    </div>
+    <div>
+      <h4>Talk to us</h4>
+      <a href="tel:+13469885449">(346) 988-5449</a>
+      <a href="mailto:hello@lakesidethreadz.com">hello@lakesidethreadz.com</a>
+      <a href="/quote/">Get a quote &rarr;</a>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <a href="/services/">Services</a>
+      <a href="/gallery/">Gallery</a>
+      <a href="/business-orders/">Business Orders</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contact/">Contact</a>
+    </div>
+  </div>
+  <p class="lit-footer-bottom">&copy; Lakeside Ink &amp; Threadz &middot; Family-run on Lake Livingston</p>
+</footer>
 
 <script>
-  const state = { apparel: null, color: null, method: null, placement: new Set(), qty: 12 };
+  const state = { apparel: null, color: null, method: null, placements: new Set(), qty: 12, sizes: {} };
 
-  // Single-select option groups (apparel is single-select across all category blocks)
-  function wireSingleSelect(groupName, selector) {
+  function wireSingleSelect(groupName, selector, stepNum) {
     const nodes = document.querySelectorAll(selector);
     nodes.forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
         nodes.forEach(o => o.classList.remove('selected'));
         btn.classList.add('selected');
         state[groupName] = btn.dataset.value;
-        markStepDone(btn.closest('.step').dataset.step);
+        markStepDone(stepNum || btn.closest('.step').dataset.step);
       });
     });
   }
   wireSingleSelect('apparel', '.options[data-group="apparel"] .opt');
   wireSingleSelect('method',  '.options[data-group="method"] .opt');
 
-  // Multi-select placements
   document.querySelectorAll('.place-list[data-group="placement"] .place-row').forEach(row => {
-    row.addEventListener('click', () => {
+    row.addEventListener('click', (e) => {
+      e.preventDefault();
       row.classList.toggle('selected');
-      if (row.classList.contains('selected')) state.placement.add(row.dataset.value);
-      else state.placement.delete(row.dataset.value);
+      if (row.classList.contains('selected')) state.placements.add(row.dataset.value);
+      else state.placements.delete(row.dataset.value);
       markStepDone(3);
     });
   });
 
-  // Colors
   document.querySelectorAll('.colors .swatch').forEach(sw => {
     sw.addEventListener('click', () => {
       document.querySelectorAll('.colors .swatch').forEach(o => o.classList.remove('selected'));
@@ -701,7 +445,14 @@
     });
   });
 
-  // Quantity
+  document.querySelectorAll('.sizes input').forEach(input => {
+    input.addEventListener('input', () => {
+      const v = parseInt(input.value, 10);
+      if (v > 0) state.sizes[input.dataset.size] = v;
+      else delete state.sizes[input.dataset.size];
+    });
+  });
+
   const qtyEl = document.getElementById('qty-val');
   document.querySelectorAll('.qty-btn').forEach(b => {
     b.addEventListener('click', () => {
@@ -718,7 +469,6 @@
     });
   }
 
-  // Progress ribbon
   function markStepDone(step) {
     const s = parseInt(step, 10);
     const el = document.querySelector('.progress-step[data-step="' + s + '"]');
@@ -730,11 +480,75 @@
     }
   }
 
-  // Submit — mockup only
-  const toast = document.getElementById('toast');
-  document.getElementById('submit-btn').addEventListener('click', () => {
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2400);
+  // Submit — real POST to /api/quote
+  const form = document.getElementById('quote-form');
+  const status = document.getElementById('status');
+  const btn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    status.className = 'status';
+    status.textContent = '';
+    const fd = new FormData(form);
+    const name = (fd.get('name') || '').toString().trim();
+    const email = (fd.get('email') || '').toString().trim();
+    const phone = (fd.get('phone') || '').toString().trim();
+    const notes = (fd.get('notes') || '').toString().trim();
+    const honeypot = (fd.get('website') || '').toString();
+    if (honeypot) return;
+    if (!name || !email) {
+      status.className = 'status err';
+      status.textContent = 'Name and email are required.';
+      return;
+    }
+
+    // Assemble wizard state into a readable message.
+    const sizesList = Object.entries(state.sizes).map(([s,q]) => `${s} × ${q}`).join(', ') || '(none entered)';
+    const placementsList = state.placements.size ? Array.from(state.placements).join('; ') : '(none picked)';
+    const message =
+`--- Quote Wizard (preview page) ---
+Garment:      ${state.apparel || '(none picked)'}
+Color:        ${state.color || '(none picked)'}
+Sizes:        ${sizesList}
+Method:       ${state.method || '(none picked)'}
+Placements:   ${placementsList}
+Quantity:     ${state.qty}
+
+Notes from customer:
+${notes || '(none)'}`;
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const r = await fetch('/api/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, service: 'quote-wizard-preview', message })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok) {
+        status.className = 'status ok';
+        status.textContent = 'Thanks! Kristen will reply within one business day. Watch for an email from hello@lakesidethreadz.com.';
+        form.reset();
+        // Reset wizard state so accidental re-submit isn't stale.
+        state.apparel = null; state.color = null; state.method = null; state.placements.clear(); state.qty = 12; state.sizes = {};
+        qtyEl.textContent = '12';
+        document.querySelectorAll('.opt.selected, .place-row.selected, .swatch.selected').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.sizes input').forEach(i => i.value = '');
+        document.querySelectorAll('.progress-step').forEach(el => el.classList.remove('done'));
+      } else {
+        status.className = 'status err';
+        status.textContent = (j.error || 'Something went wrong.') + ' Please call or text (346) 988-5449, or email hello@lakesidethreadz.com.';
+      }
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = 'Network error. Please call or text (346) 988-5449.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send my quote request';
+    }
   });
 </script>
+
 </body>
+</html>
