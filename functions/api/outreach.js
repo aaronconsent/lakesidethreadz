@@ -322,7 +322,8 @@ export async function prospectsPost({ request, env }) {
     if (await env.STATUS.get(key)) { skipped++; continue; } // no dupes
     await env.STATUS.put(key, JSON.stringify({
       email: p.email.trim(), name: p.name || '', org: p.org || '', category: p.category || '',
-      city: p.city || '', status: 'active', touches: [], added: Date.now(),
+      city: p.city || '', lane: p.lane || '', sub_type: p.sub_type || '', source_url: p.source_url || '',
+      status: 'active', touches: [], added: Date.now(),
     }));
     added++;
   }
@@ -660,6 +661,8 @@ async function dashboardGetInner({ request, env }) {
   const byStatus = prospects.reduce((a, p) => { a[p.status || 'unknown'] = (a[p.status || 'unknown'] || 0) + 1; return a; }, {});
   const byTouches = prospects.reduce((a, p) => { const n = (p.touches || []).length; a[n] = (a[n] || 0) + 1; return a; }, {});
   const byCategory = prospects.reduce((a, p) => { const c = (p.category || 'uncategorized').slice(0, 30); a[c] = (a[c] || 0) + 1; return a; }, {});
+  const byLane     = prospects.reduce((a, p) => { const l = (p.lane || '?').toUpperCase(); a[l] = (a[l] || 0) + 1; return a; }, {});
+  const byCity     = prospects.reduce((a, p) => { const c = (p.city || 'unknown').slice(0, 30); a[c] = (a[c] || 0) + 1; return a; }, {});
   const engagedCount = prospects.filter(p => p.engaged).length;
 
   // Send activity — sum the daily logs. Only read the most recent 30 days
@@ -768,7 +771,7 @@ async function dashboardGetInner({ request, env }) {
   blogPosts.sort((a, b) => b.lastmod.localeCompare(a.lastmod));
 
   const stats = {
-    totalProspects, byStatus, byTouches, byCategory, engagedCount,
+    totalProspects, byStatus, byTouches, byCategory, byLane, byCity, engagedCount,
     sentToday, sentThisWeek, sentThisMonth, sentAllTime,
     last30, dailyLogs, dailyCap: parseInt(env.DAILY_CAP || '10', 10),
     newsletterSubs: newsletterSubs.length, newsletterSentThisMonth: newsletterSent,
@@ -814,6 +817,15 @@ function renderDashboard(s) {
   }).join('');
   const catRows = Object.entries(s.byCategory).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, v]) =>
     `<tr><td style="padding:6px 12px 6px 0">${esc(k || '(none)')}</td><td style="padding:6px 0;font-weight:600;text-align:right;width:60px">${v}</td><td style="padding:6px 0 6px 12px;width:180px">${bar(v, Math.max(...Object.values(s.byCategory)), '#E10078')}</td></tr>`
+  ).join('');
+  const LANE_LABEL = { A: 'Chambers', B: 'Medical/dental', C: 'Sports/schools', D: 'Marinas + direct-B2B', E: 'Churches', F: 'Guides + outfitters', G: 'RV parks + campgrounds', '?': 'Unlabeled' };
+  const laneMax = Math.max(1, ...Object.values(s.byLane || {}));
+  const laneRows = Object.entries(s.byLane || {}).sort((a, b) => (a[0] === '?' ? 1 : b[0] === '?' ? -1 : a[0].localeCompare(b[0]))).map(([k, v]) =>
+    `<tr><td style="padding:6px 12px 6px 0"><b style="color:#001E78">${esc(k)}</b> &nbsp;<span style="color:#666">${esc(LANE_LABEL[k] || '')}</span></td><td style="padding:6px 0;font-weight:600;text-align:right;width:60px">${v}</td><td style="padding:6px 0 6px 12px;width:180px">${bar(v, laneMax, '#001E78')}</td></tr>`
+  ).join('');
+  const cityMax = Math.max(1, ...Object.values(s.byCity || {}));
+  const cityRows = Object.entries(s.byCity || {}).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([k, v]) =>
+    `<tr><td style="padding:6px 12px 6px 0">${esc(k || '(none)')}</td><td style="padding:6px 0;font-weight:600;text-align:right;width:60px">${v}</td><td style="padding:6px 0 6px 12px;width:180px">${bar(v, cityMax, '#15803D')}</td></tr>`
   ).join('');
   const maxSend = Math.max(1, ...s.last30.map(d => s.dailyLogs[d] || 0));
   const send30 = s.last30.map(d => {
@@ -876,6 +888,17 @@ function renderDashboard(s) {
         <div class="card">
           <h2>Touch progression</h2>
           <table><tbody>${touchBars}</tbody></table>
+        </div>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="card">
+          <h2>By discovery lane</h2>
+          <table><tbody>${laneRows || '<tr><td colspan="3" style="padding:16px;text-align:center;color:#888">No prospects yet.</td></tr>'}</tbody></table>
+        </div>
+        <div class="card">
+          <h2>By city</h2>
+          <table><tbody>${cityRows || '<tr><td colspan="3" style="padding:16px;text-align:center;color:#888">No prospects yet.</td></tr>'}</tbody></table>
         </div>
       </div>
 
