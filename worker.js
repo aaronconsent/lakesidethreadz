@@ -23,6 +23,19 @@ import {
 const SIMPLE_ENDPOINTS = new Set(["/api/contact", "/api/quote"]);
 const RICH_QUOTE_ENDPOINT = "/api/submit-quote";
 
+// 301 redirects for consolidated town service-area pages (retired 2026-08-16).
+// See seo/keyword-research-2026-08-15.md — those 7 town pages had 0 search volume
+// and now redirect to the consolidated Lake Livingston service-area page.
+const LEGACY_REDIRECTS = {
+  "/service-area/cleveland-tx/":   "/service-area/lake-livingston/",
+  "/service-area/coldspring-tx/":  "/service-area/lake-livingston/",
+  "/service-area/huntsville-tx/":  "/service-area/lake-livingston/",
+  "/service-area/livingston-tx/":  "/service-area/lake-livingston/",
+  "/service-area/onalaska-tx/":    "/service-area/lake-livingston/",
+  "/service-area/splendora-tx/":   "/service-area/lake-livingston/",
+  "/service-area/lufkin-tx/":      "/service-area/lake-livingston/",
+};
+
 // Outreach routes — most are admin-gated (?key=OUTREACH_KEY); /unsub is public
 // per CAN-SPAM one-click-unsub requirement. /dashboard gated separately by
 // DASHBOARD_KEY so the client can view stats without owning write access.
@@ -43,6 +56,12 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
+
+    // Legacy town-page 301s — handle both with-slash and without-slash forms.
+    const redirTarget = LEGACY_REDIRECTS[path] || LEGACY_REDIRECTS[path + "/"];
+    if (redirTarget) {
+      return new Response(null, { status: 301, headers: { Location: redirTarget } });
+    }
 
     if (SIMPLE_ENDPOINTS.has(path)) {
       if (request.method === "GET") return json({ ok: true, endpoint: path }, 200);
