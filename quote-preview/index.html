@@ -85,9 +85,12 @@
     .opt:hover { border-color:var(--lit-blue); transform:translateY(-1px); }
     .opt.selected { border-color:var(--lit-blue); background:var(--brand-soft); border-style:dashed; }
     .opt.selected::after { content:""; position:absolute; top:12px; right:12px; width:16px; height:16px; border-radius:50%; background:var(--lit-blue); box-shadow: inset 0 0 0 3px var(--brand-soft), 0 0 0 1px var(--lit-blue); }
+    .opt-icon { width:48px; height:48px; margin-bottom:10px; }
+    .opt-icon svg { width:100%; height:100%; display:block; }
     .opt-title { font-weight:700; font-size:15px; color:var(--ink); display:flex; align-items:center; gap:8px; padding-right:24px; }
     .opt-brand { font-size:11px; color:var(--muted); font-weight:500; margin-top:2px; }
-    .opt-hint { font-size:12px; color:var(--ink-soft); margin-top:6px; line-height:1.4; }
+    .opt-material { font-size:11px; color:var(--ink-soft); font-weight:600; margin-top:6px; padding:4px 8px; background:var(--surface-alt); border-radius:4px; border-left:2px solid var(--lit-blue); line-height:1.4; }
+    .opt-hint { font-size:12px; color:var(--ink-soft); margin-top:6px; line-height:1.45; font-style:italic; }
     .opt-tier { display:inline-flex; align-items:center; font-size:9px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; padding:2px 7px; border-radius:4px; background:var(--tier-basic-soft); color:var(--tier-basic); }
     .opt-tier[data-tier="premium"] { background:var(--tier-premium-soft); color:var(--tier-premium); }
     .opt-tier[data-tier="pro"]     { background:var(--tier-pro-soft);     color:var(--tier-pro); }
@@ -224,7 +227,7 @@
   <nav class="progress" aria-label="Quote steps" id="progress">
     <div class="progress-step active" data-step="1"><span class="n">1</span><span class="label">Category</span></div>
     <div class="progress-step" data-step="2"><span class="n">2</span><span class="label">Garment</span></div>
-    <div class="progress-step" data-step="3"><span class="n">3</span><span class="label">Color &amp; size</span></div>
+    <div class="progress-step" data-step="3"><span class="n">3</span><span class="label">Sizes</span></div>
     <div class="progress-step" data-step="4"><span class="n">4</span><span class="label">Decorate</span></div>
     <div class="progress-step" data-step="5"><span class="n">5</span><span class="label">Quantity</span></div>
     <div class="progress-step" data-step="6"><span class="n">6</span><span class="label">Send it</span></div>
@@ -264,12 +267,12 @@
           <p class="cat-tile-hint">Polos, workwear, moisture-wicking</p>
         </div>
       </button>
-      <button class="cat-tile" data-value="headwear-womens">
+      <button class="cat-tile" data-value="headwear">
         <img class="cat-tile-img" src="/assets/img/Trucker-cap-with-FAFO-embroidery.png" alt="Custom embroidered trucker hat"/>
         <div class="cat-tile-overlay"></div>
         <div class="cat-tile-body">
-          <p class="cat-tile-title">Headwear &amp; Women's</p>
-          <p class="cat-tile-hint">Truckers, snapbacks, women's cuts</p>
+          <p class="cat-tile-title">Headwear</p>
+          <p class="cat-tile-hint">Truckers, snapbacks, dad hats, flexfit, beanies</p>
         </div>
       </button>
     </div>
@@ -288,95 +291,180 @@
         <p><span id="cat-context">Loading…</span> · Tiers tell you the price feel — <b>Basic</b>, <b>Premium</b>, <b>Pro</b>.</p>
       </div>
     </div>
+    <p class="note" style="margin:0 0 16px;"><b>Materials note:</b> descriptions below are industry-standard placeholders — Kristen will confirm exact fabrics per SKU.</p>
     <div class="options" data-group="apparel">
       <button class="opt" data-cat="shirts"      data-value="Bella+Canvas 3001 · Premium Jersey Tee">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M20,8 L25,4 Q30,10 35,4 L40,8 L54,16 L48,26 L42,22 L42,54 L18,54 L18,22 L12,26 L6,16 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
         <div class="opt-title">Premium Jersey Tee <span class="opt-tier" data-tier="premium">Premium</span></div>
         <div class="opt-brand">Bella + Canvas · 3001</div>
-        <div class="opt-hint">Soft, lightweight, ideal for DTF prints.</div>
+        <div class="opt-material">100% Airlume combed ringspun cotton · 4.2 oz</div>
+        <div class="opt-hint">Soft, lightweight — best canvas for DTF prints.</div>
       </button>
       <button class="opt" data-cat="shirts"      data-value="Gildan 5000 · Heavy Cotton Tee">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M20,8 L25,4 Q30,10 35,4 L40,8 L54,16 L48,26 L42,22 L42,54 L18,54 L18,22 L12,26 L6,16 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
         <div class="opt-title">Heavy Cotton Tee <span class="opt-tier" data-tier="basic">Basic</span></div>
         <div class="opt-brand">Gildan · 5000</div>
+        <div class="opt-material">100% heavyweight cotton · 5.3 oz</div>
         <div class="opt-hint">Budget workhorse. Great for work crews.</div>
       </button>
       <button class="opt" data-cat="shirts"      data-value="Gildan 64000 · Softstyle Tee">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M20,8 L25,4 Q30,10 35,4 L40,8 L54,16 L48,26 L42,22 L42,54 L18,54 L18,22 L12,26 L6,16 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
         <div class="opt-title">Softstyle Tee <span class="opt-tier" data-tier="basic">Basic</span></div>
         <div class="opt-brand">Gildan · 64000</div>
-        <div class="opt-hint">Softer, slightly upgraded feel.</div>
+        <div class="opt-material">100% ringspun cotton · 4.5 oz · softer hand than the 5000</div>
+        <div class="opt-hint">A step up from the Heavy Cotton — feels lighter.</div>
       </button>
       <button class="opt" data-cat="shirts"      data-value="Champion T525C · Champion Tee">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M20,8 L25,4 Q30,10 35,4 L40,8 L54,16 L48,26 L42,22 L42,54 L18,54 L18,22 L12,26 L6,16 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
         <div class="opt-title">Champion Tee <span class="opt-tier" data-tier="premium">Premium</span></div>
         <div class="opt-brand">Champion · T525C</div>
-        <div class="opt-hint">Recognizable brand. DTF-certified.</div>
+        <div class="opt-material">100% cotton · 6.1 oz · recognizable Champion tag</div>
+        <div class="opt-hint">Brand name people know. DTF-certified.</div>
       </button>
+
       <button class="opt" data-cat="hoodies"     data-value="Gildan 18500 · Heavy Blend Hoodie">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M18,14 Q30,4 42,14 L52,20 L46,32 L42,28 L42,56 L18,56 L18,28 L14,32 L8,20 Z M22,16 Q30,26 38,16" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
         <div class="opt-title">Heavy Blend Hoodie <span class="opt-tier" data-tier="basic">Basic</span></div>
         <div class="opt-brand">Gildan · 18500</div>
+        <div class="opt-material">50/50 cotton-poly blend · 8 oz · double-lined hood</div>
         <div class="opt-hint">Affordable, everybody-knows-it hoodie.</div>
       </button>
       <button class="opt" data-cat="hoodies"     data-value="Bella+Canvas 3719 · Sponge Fleece Hoodie">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M18,14 Q30,4 42,14 L52,20 L46,32 L42,28 L42,56 L18,56 L18,28 L14,32 L8,20 Z M22,16 Q30,26 38,16" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
         <div class="opt-title">Sponge Fleece Hoodie <span class="opt-tier" data-tier="premium">Premium</span></div>
         <div class="opt-brand">Bella + Canvas · 3719</div>
+        <div class="opt-material">52/48 cotton-poly sponge fleece · 8.5 oz · retail feel</div>
         <div class="opt-hint">Boutique-quality pullover.</div>
       </button>
       <button class="opt" data-cat="hoodies"     data-value="Bella+Canvas 4719 · Heavyweight Luxury Hoodie">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M18,14 Q30,4 42,14 L52,20 L46,32 L42,28 L42,56 L18,56 L18,28 L14,32 L8,20 Z M22,16 Q30,26 38,16" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
         <div class="opt-title">Heavyweight Luxury Hoodie <span class="opt-tier" data-tier="pro">Pro</span></div>
         <div class="opt-brand">Bella + Canvas · 4719</div>
-        <div class="opt-hint">10 oz. Premium price, premium feel.</div>
+        <div class="opt-material">60/40 cotton-poly heavyweight fleece · 10 oz</div>
+        <div class="opt-hint">Substantial, structured, premium.</div>
       </button>
       <button class="opt" data-cat="hoodies"     data-value="Gildan 18000 · Crewneck Sweatshirt">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M22,10 L28,6 Q30,10 32,6 L38,10 L52,18 L46,28 L42,24 L42,56 L18,56 L18,24 L14,28 L8,18 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
         <div class="opt-title">Crewneck Sweatshirt <span class="opt-tier" data-tier="basic">Basic</span></div>
         <div class="opt-brand">Gildan · 18000</div>
+        <div class="opt-material">50/50 cotton-poly blend · 8 oz</div>
         <div class="opt-hint">Classic pullover crewneck.</div>
       </button>
-      <button class="opt" data-cat="performance" data-value="Core 365 88181 · Performance Polo">
-        <div class="opt-title">Performance Polo <span class="opt-tier" data-tier="pro">Pro</span></div>
-        <div class="opt-brand">Core 365 · 88181</div>
-        <div class="opt-hint">Moisture-wicking, UV. Business favorite.</div>
-      </button>
-      <button class="opt" data-cat="performance" data-value="Gildan G465 · Performance Hooded Tee">
-        <div class="opt-title">Performance Hooded Tee <span class="opt-tier" data-tier="pro">Pro</span></div>
-        <div class="opt-brand">Gildan · G465</div>
-        <div class="opt-hint">Lake Livingston go-to. Fishing / outdoor.</div>
-      </button>
-      <button class="opt" data-cat="headwear-womens" data-value="Richardson 112 (or 115) · Trucker Hat">
-        <div class="opt-title">Trucker Hat <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Richardson · 112 (or 115 low-profile)</div>
-        <div class="opt-hint">The hat everyone actually asks for.</div>
-      </button>
-      <button class="opt" data-cat="headwear-womens" data-value="Bella+Canvas B7502 · Women's Cropped Hoodie">
+      <button class="opt" data-cat="hoodies"     data-value="Bella+Canvas B7502 · Women's Cropped Hoodie">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M18,14 Q30,4 42,14 L52,20 L46,32 L42,28 L42,46 L18,46 L18,28 L14,32 L8,20 Z M22,16 Q30,26 38,16" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
         <div class="opt-title">Women's Cropped Hoodie <span class="opt-tier" data-tier="premium">Premium</span></div>
         <div class="opt-brand">Bella + Canvas · B7502</div>
-        <div class="opt-hint">Boutique look, not a sea of unisex.</div>
+        <div class="opt-material">60/40 cotton-poly sponge fleece · 8.5 oz · cropped fit</div>
+        <div class="opt-hint">Boutique women's look. Not a sea of unisex.</div>
+      </button>
+
+      <button class="opt" data-cat="performance" data-value="Core 365 88181 · Performance Polo">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M20,8 L25,4 L30,10 L35,4 L40,8 L54,16 L48,26 L42,22 L42,54 L18,54 L18,22 L12,26 L6,16 Z M27,4 L27,18 L33,18 L33,4" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="opt-title">Performance Polo <span class="opt-tier" data-tier="pro">Pro</span></div>
+        <div class="opt-brand">Core 365 · 88181</div>
+        <div class="opt-material">100% polyester interlock · moisture-wicking · UV-protective</div>
+        <div class="opt-hint">Business & work favorite. Holds embroidery beautifully.</div>
+      </button>
+      <button class="opt" data-cat="performance" data-value="Gildan G465 · Performance Hooded Tee">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M20,10 Q30,2 40,10 L52,18 L46,28 L42,24 L42,54 L18,54 L18,24 L12,28 L6,18 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="opt-title">Performance Hooded Tee <span class="opt-tier" data-tier="pro">Pro</span></div>
+        <div class="opt-brand">Gildan · G465</div>
+        <div class="opt-material">100% polyester performance · lightweight · UV rated</div>
+        <div class="opt-hint">Lake Livingston go-to. Fishing / outdoor.</div>
+      </button>
+
+      <button class="opt" data-cat="headwear" data-value="Richardson 112 · Trucker Hat">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 40" aria-hidden="true"><path d="M12,26 Q12,8 30,8 Q48,8 48,26 Z M6,26 L54,26 Q54,32 30,36 Q6,32 6,26 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="opt-title">Trucker Hat <span class="opt-tier" data-tier="premium">Premium</span></div>
+        <div class="opt-brand">Richardson · 112</div>
+        <div class="opt-material">Cotton-poly front panel · nylon mesh back · structured 6-panel</div>
+        <div class="opt-hint">The hat everyone actually asks for.</div>
+      </button>
+      <button class="opt" data-cat="headwear" data-value="Richardson 115 · Low-Profile Trucker">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 40" aria-hidden="true"><path d="M14,24 Q14,12 30,12 Q46,12 46,24 Z M6,24 L54,24 Q54,30 30,34 Q6,30 6,24 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="opt-title">Low-Profile Trucker <span class="opt-tier" data-tier="premium">Premium</span></div>
+        <div class="opt-brand">Richardson · 115</div>
+        <div class="opt-material">Cotton-poly front · mesh back · shorter crown, boutique fit</div>
+        <div class="opt-hint">Modern retail-shop look. Women's and men's.</div>
+      </button>
+      <button class="opt" data-cat="headwear" data-value="Adams AD969 · Dad Hat">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 40" aria-hidden="true"><path d="M14,26 Q14,14 30,14 Q46,14 46,26 Q46,28 44,28 L16,28 Q14,28 14,26 Z M6,28 L54,28 Q54,34 30,36 Q6,34 6,28 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="opt-title">Dad Hat <span class="opt-tier" data-tier="basic">Basic</span></div>
+        <div class="opt-brand">Adams · AD969 (or similar)</div>
+        <div class="opt-material">100% brushed cotton twill · unstructured, low-profile · buckle back</div>
+        <div class="opt-hint">Casual, soft, broken-in feel from day one.</div>
+      </button>
+      <button class="opt" data-cat="headwear" data-value="Yupoong 6089M · Snapback">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 40" aria-hidden="true"><path d="M12,24 Q12,6 30,6 Q48,6 48,24 Z M6,24 L54,24 L54,30 L6,30 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="opt-title">Snapback <span class="opt-tier" data-tier="premium">Premium</span></div>
+        <div class="opt-brand">Yupoong · 6089M (or similar)</div>
+        <div class="opt-material">80/20 acrylic-wool · structured 6-panel · flat brim · plastic snapback</div>
+        <div class="opt-hint">Streetwear silhouette. Great DTF backdrop.</div>
+      </button>
+      <button class="opt" data-cat="headwear" data-value="Flexfit 6277 · Flexfit Fitted Cap">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 40" aria-hidden="true"><path d="M12,26 Q12,8 30,8 Q48,8 48,26 Z M6,26 L54,26 Q54,32 30,36 Q6,32 6,26 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="opt-title">Flexfit Fitted Cap <span class="opt-tier" data-tier="premium">Premium</span></div>
+        <div class="opt-brand">Flexfit · 6277</div>
+        <div class="opt-material">63/34/3 cotton-poly-spandex · structured 6-panel · stretch band, no closure</div>
+        <div class="opt-hint">Athletic fit. Popular for teams and coaches.</div>
+      </button>
+      <button class="opt" data-cat="headwear" data-value="Yupoong 1501KC · Cuffed Beanie">
+        <div class="opt-icon">
+          <svg viewBox="0 0 60 40" aria-hidden="true"><path d="M16,10 Q16,4 30,4 Q44,4 44,10 L44,30 L16,30 Z M14,30 L46,30 L46,36 L14,36 Z" fill="#F3F1EA" stroke="#4A5169" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="opt-title">Cuffed Beanie <span class="opt-tier" data-tier="basic">Basic</span></div>
+        <div class="opt-brand">Yupoong · 1501KC (or similar)</div>
+        <div class="opt-material">100% acrylic knit · double-layer cuff · one-size-fits-most</div>
+        <div class="opt-hint">Winter and work-crew standby.</div>
       </button>
     </div>
     <div class="step-nav" style="margin-top:24px;">
       <button class="btn btn-prev">← Back</button>
-      <button class="btn btn-next" id="next-2" disabled>Next: Color &amp; size →</button>
+      <button class="btn btn-next" id="next-2" disabled>Next: Sizes →</button>
     </div>
   </section>
 
-  <!-- STEP 3 — COLOR + SIZES -->
+  <!-- STEP 3 — SIZES -->
   <section class="step" data-step="3">
     <div class="step-head">
       <div class="step-num">03</div>
       <div class="step-title">
-        <h2>Color and sizes</h2>
-        <p>Pick a color, then punch in roughly how many of each size. It doesn't have to be exact.</p>
+        <h2>Sizes &amp; quantities</h2>
+        <p>Punch in roughly how many of each size. Kristen will confirm color options for the SKU you picked in her reply.</p>
       </div>
     </div>
-    <div class="subhead">Color</div>
-    <div class="colors" data-group="color">
-      <button class="swatch" data-value="Navy"><div class="swatch-chip" style="background:#1A2340"></div><div class="swatch-label">Navy</div></button>
-      <button class="swatch" data-value="Black"><div class="swatch-chip" style="background:#111"></div><div class="swatch-label">Black</div></button>
-      <button class="swatch" data-value="White"><div class="swatch-chip" style="background:#F5F5F0"></div><div class="swatch-label">White</div></button>
-      <button class="swatch" data-value="Heather Grey"><div class="swatch-chip" style="background:#95989E"></div><div class="swatch-label">Heather Grey</div></button>
-      <button class="swatch" data-value="Kelly Green"><div class="swatch-chip" style="background:#1F7A3F"></div><div class="swatch-label">Kelly Green</div></button>
-      <button class="swatch" data-value="Red"><div class="swatch-chip" style="background:#B21F2A"></div><div class="swatch-label">Red</div></button>
-      <button class="swatch" data-value="Charcoal"><div class="swatch-chip" style="background:#3B3F47"></div><div class="swatch-label">Charcoal</div></button>
-      <button class="swatch" data-value="Royal Blue"><div class="swatch-chip" style="background:#1D3E8C"></div><div class="swatch-label">Royal Blue</div></button>
-    </div>
-    <div class="subhead">Sizes &amp; quantities</div>
     <div class="sizes">
       <div class="size-cell"><label>XS</label><input type="number" min="0" placeholder="0" data-size="XS"></div>
       <div class="size-cell"><label>S</label><input type="number" min="0" placeholder="0" data-size="S"></div>
@@ -536,7 +624,6 @@
       <h3>Your quote so far</h3>
       <dl id="summary-dl">
         <dt>Garment</dt><dd id="s-garment">—</dd>
-        <dt>Color</dt><dd id="s-color">—</dd>
         <dt>Sizes</dt><dd id="s-sizes">—</dd>
         <dt>Method</dt><dd id="s-method">—</dd>
         <dt>Placements</dt><dd id="s-placements">—</dd>
@@ -587,12 +674,12 @@
 </footer>
 
 <script>
-  const state = { category: null, apparel: null, color: null, method: null, placements: new Set(), qty: 12, sizes: {} };
+  const state = { category: null, apparel: null, method: null, placements: new Set(), qty: 12, sizes: {} };
   const CAT_LABELS = {
     'shirts':'Shirts',
     'hoodies':'Hoodies & Sweatshirts',
     'performance':'Performance & Work',
-    'headwear-womens':"Headwear & Women's",
+    'headwear':'Headwear',
   };
 
   let currentStep = 1;
@@ -670,17 +757,9 @@
     showStep(3);
   });
 
-  // STEP 3 — color + sizes
+  // STEP 3 — sizes only (color removed 2026-08-16)
   const next3 = document.getElementById('next-3');
-  function check3() { next3.disabled = !(state.color && Object.keys(state.sizes).length > 0); }
-  document.querySelectorAll('.colors .swatch').forEach(sw => {
-    sw.addEventListener('click', () => {
-      document.querySelectorAll('.colors .swatch').forEach(o => o.classList.remove('selected'));
-      sw.classList.add('selected');
-      state.color = sw.dataset.value;
-      check3();
-    });
-  });
+  function check3() { next3.disabled = Object.keys(state.sizes).length === 0; }
   document.querySelectorAll('.sizes input').forEach(input => {
     input.addEventListener('input', () => {
       const v = parseInt(input.value, 10);
@@ -744,7 +823,6 @@
   // STEP 6 — summary + submit
   function refreshSummary() {
     document.getElementById('s-garment').textContent = state.apparel || '—';
-    document.getElementById('s-color').textContent = state.color || '—';
     const sizesList = Object.entries(state.sizes).map(([s,q]) => s + ' × ' + q).join(', ') || '—';
     document.getElementById('s-sizes').textContent = sizesList;
     document.getElementById('s-method').textContent = state.method || '—';
@@ -775,7 +853,6 @@
 `--- Quote Wizard (preview page) ---
 Category:     ${CAT_LABELS[state.category] || '(none)'}
 Garment:      ${state.apparel || '(none picked)'}
-Color:        ${state.color || '(none picked)'}
 Sizes:        ${sizesList}
 Method:       ${state.method || '(none picked)'}
 Placements:   ${placementsList}
