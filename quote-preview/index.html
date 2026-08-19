@@ -88,9 +88,8 @@
     .opt-icon { width:100%; height:140px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border-radius:8px; padding:8px; }
     .opt-icon img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
     .opt-title { font-weight:700; font-size:15px; color:var(--ink); display:flex; align-items:center; gap:8px; padding-right:24px; }
-    .opt-brand { font-size:11px; color:var(--muted); font-weight:500; margin-top:2px; }
-    .opt-material { font-size:11px; color:var(--ink-soft); font-weight:600; margin-top:6px; padding:4px 8px; background:var(--surface-alt); border-radius:4px; border-left:2px solid var(--lit-blue); line-height:1.4; }
-    .opt-hint { font-size:12px; color:var(--ink-soft); margin-top:6px; line-height:1.45; font-style:italic; }
+    .opt-material { font-size:13px; color:var(--ink); font-weight:600; margin-top:8px; padding:8px 10px; background:var(--surface-alt); border-radius:6px; border-left:3px solid var(--lit-blue); line-height:1.45; }
+    .opt-sku { font-size:10px; color:var(--muted); font-weight:500; margin-top:8px; letter-spacing:.02em; text-transform:uppercase; }
     .opt-tier { display:inline-flex; align-items:center; font-size:9px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; padding:2px 7px; border-radius:4px; background:var(--tier-basic-soft); color:var(--tier-basic); }
     .opt-tier[data-tier="premium"] { background:var(--tier-premium-soft); color:var(--tier-premium); }
     .opt-tier[data-tier="pro"]     { background:var(--tier-pro-soft);     color:var(--tier-pro); }
@@ -291,129 +290,112 @@
         <p><span id="cat-context">Loading…</span> · Tiers tell you the price feel — <b>Basic</b>, <b>Premium</b>, <b>Pro</b>.</p>
       </div>
     </div>
-    <p class="note" style="margin:0 0 16px;"><b>Materials note:</b> descriptions below are industry-standard placeholders — Kristen will confirm exact fabrics per SKU.</p>
+    <p class="note" style="margin:0 0 16px;"><b>Note:</b> material descriptions below are approximate — Kristen confirms exact fabrics and weights when she writes your quote.</p>
     <div class="options" data-group="apparel">
       <button class="opt" data-cat="shirts"      data-value="Bella+Canvas 3001 · Premium Jersey Tee">
         <div class="opt-icon"><img src="/assets/img/garments/bella-3001.png" alt="Bella + Canvas 3001 Premium Jersey Tee" loading="lazy"></div>
-        <div class="opt-title">Premium Jersey Tee <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Bella + Canvas · 3001</div>
-        <div class="opt-material">100% Airlume combed ringspun cotton · 4.2 oz</div>
-        <div class="opt-hint">Soft, lightweight — best canvas for DTF prints.</div>
+        <div class="opt-title">Classic Tee <span class="opt-tier" data-tier="premium">Premium</span></div>
+        <div class="opt-material">Soft ringspun cotton · lightweight · smooth for prints</div>
+        <div class="opt-sku">SKU: Bella+Canvas 3001</div>
       </button>
       <button class="opt" data-cat="shirts"      data-value="Gildan 5000 · Heavy Cotton Tee">
         <div class="opt-icon"><img src="/assets/img/garments/gildan-5000.png" alt="Gildan 5000 Heavy Cotton Tee" loading="lazy"></div>
         <div class="opt-title">Heavy Cotton Tee <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-brand">Gildan · 5000</div>
-        <div class="opt-material">100% heavyweight cotton · 5.3 oz</div>
-        <div class="opt-hint">Budget workhorse. Great for work crews.</div>
+        <div class="opt-material">Sturdy 100% cotton · workwear weight · long-lasting</div>
+        <div class="opt-sku">SKU: Gildan 5000</div>
       </button>
       <button class="opt" data-cat="shirts"      data-value="Gildan 64000 · Softstyle Tee">
         <div class="opt-icon"><img src="/assets/img/garments/gildan-64000.png" alt="Gildan 64000 Softstyle Tee" loading="lazy"></div>
         <div class="opt-title">Softstyle Tee <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-brand">Gildan · 64000</div>
-        <div class="opt-material">100% ringspun cotton · 4.5 oz · softer hand than the 5000</div>
-        <div class="opt-hint">A step up from the Heavy Cotton — feels lighter.</div>
+        <div class="opt-material">Soft ringspun cotton · lighter than the Heavy Cotton · comfortable</div>
+        <div class="opt-sku">SKU: Gildan 64000</div>
       </button>
       <button class="opt" data-cat="shirts"      data-value="Champion T525C · Champion Tee">
         <div class="opt-icon"><img src="/assets/img/garments/champion-t525c.png" alt="Champion T525C Tee" loading="lazy"></div>
         <div class="opt-title">Champion Tee <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Champion · T525C</div>
-        <div class="opt-material">100% cotton · 6.1 oz · recognizable Champion tag</div>
-        <div class="opt-hint">Brand name people know. DTF-certified.</div>
+        <div class="opt-material">Heavyweight cotton · brand-name tag people recognize</div>
+        <div class="opt-sku">SKU: Champion T525C</div>
       </button>
 
       <button class="opt" data-cat="hoodies"     data-value="Gildan 18500 · Heavy Blend Hoodie">
         <div class="opt-icon"><img src="/assets/img/garments/gildan-18500.png" alt="Gildan 18500 Heavy Blend Hoodie" loading="lazy"></div>
-        <div class="opt-title">Heavy Blend Hoodie <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-brand">Gildan · 18500</div>
-        <div class="opt-material">50/50 cotton-poly blend · 8 oz · double-lined hood</div>
-        <div class="opt-hint">Affordable, everybody-knows-it hoodie.</div>
+        <div class="opt-title">Everyday Hoodie <span class="opt-tier" data-tier="basic">Basic</span></div>
+        <div class="opt-material">Cotton-poly blend · brushed fleece interior · classic fit</div>
+        <div class="opt-sku">SKU: Gildan 18500</div>
       </button>
       <button class="opt" data-cat="hoodies"     data-value="Bella+Canvas 3719 · Sponge Fleece Hoodie">
         <div class="opt-icon"><img src="/assets/img/garments/bella-3719.png" alt="Bella + Canvas 3719 Sponge Fleece Hoodie" loading="lazy"></div>
-        <div class="opt-title">Sponge Fleece Hoodie <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Bella + Canvas · 3719</div>
-        <div class="opt-material">52/48 cotton-poly sponge fleece · 8.5 oz · retail feel</div>
-        <div class="opt-hint">Boutique-quality pullover.</div>
+        <div class="opt-title">Premium Hoodie <span class="opt-tier" data-tier="premium">Premium</span></div>
+        <div class="opt-material">Sponge fleece · softly brushed inside · retail-quality feel</div>
+        <div class="opt-sku">SKU: Bella+Canvas 3719</div>
       </button>
       <button class="opt" data-cat="hoodies"     data-value="Bella+Canvas 4719 · Heavyweight Luxury Hoodie">
         <div class="opt-icon"><img src="/assets/img/garments/bella-4719.png" alt="Bella + Canvas 4719 Heavyweight Luxury Hoodie" loading="lazy"></div>
-        <div class="opt-title">Heavyweight Luxury Hoodie <span class="opt-tier" data-tier="pro">Pro</span></div>
-        <div class="opt-brand">Bella + Canvas · 4719</div>
-        <div class="opt-material">60/40 cotton-poly heavyweight fleece · 10 oz</div>
-        <div class="opt-hint">Substantial, structured, premium.</div>
+        <div class="opt-title">Heavyweight Hoodie <span class="opt-tier" data-tier="pro">Pro</span></div>
+        <div class="opt-material">Thick 10oz fleece · substantial, structured, premium</div>
+        <div class="opt-sku">SKU: Bella+Canvas 4719</div>
       </button>
       <button class="opt" data-cat="hoodies"     data-value="Gildan 18000 · Crewneck Sweatshirt">
         <div class="opt-icon"><img src="/assets/img/garments/gildan-18000.png" alt="Gildan 18000 Crewneck Sweatshirt" loading="lazy"></div>
         <div class="opt-title">Crewneck Sweatshirt <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-brand">Gildan · 18000</div>
-        <div class="opt-material">50/50 cotton-poly blend · 8 oz</div>
-        <div class="opt-hint">Classic pullover crewneck.</div>
+        <div class="opt-material">No hood · cotton-poly blend · classic pullover feel</div>
+        <div class="opt-sku">SKU: Gildan 18000</div>
       </button>
       <button class="opt" data-cat="hoodies"     data-value="Bella+Canvas B7502 · Women's Cropped Hoodie">
         <div class="opt-icon"><img src="/assets/img/garments/bella-b7502.png" alt="Bella + Canvas B7502 Women's Cropped Hoodie" loading="lazy"></div>
         <div class="opt-title">Women's Cropped Hoodie <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Bella + Canvas · B7502</div>
-        <div class="opt-material">60/40 cotton-poly sponge fleece · 8.5 oz · cropped fit</div>
-        <div class="opt-hint">Boutique women's look. Not a sea of unisex.</div>
+        <div class="opt-material">Cropped fit · sponge fleece · boutique women’s style</div>
+        <div class="opt-sku">SKU: Bella+Canvas B7502</div>
       </button>
 
       <button class="opt" data-cat="performance" data-value="Core 365 88181 · Performance Polo">
         <div class="opt-icon"><img src="/assets/img/garments/core365-88181.png" alt="Core 365 88181 Performance Polo" loading="lazy"></div>
         <div class="opt-title">Performance Polo <span class="opt-tier" data-tier="pro">Pro</span></div>
-        <div class="opt-brand">Core 365 · 88181</div>
-        <div class="opt-material">100% polyester interlock · moisture-wicking · UV-protective</div>
-        <div class="opt-hint">Business & work favorite. Holds embroidery beautifully.</div>
+        <div class="opt-material">Moisture-wicking polyester · UV-protective · business favorite</div>
+        <div class="opt-sku">SKU: Core 365 88181</div>
       </button>
       <button class="opt" data-cat="performance" data-value="Gildan G465 · Performance Hooded Tee">
         <div class="opt-icon"><img src="/assets/img/garments/gildan-g465.png" alt="Gildan G465 Performance Hooded Tee" loading="lazy"></div>
-        <div class="opt-title">Performance Hooded Tee <span class="opt-tier" data-tier="pro">Pro</span></div>
-        <div class="opt-brand">Gildan · G465</div>
-        <div class="opt-material">100% polyester performance · lightweight · UV rated</div>
-        <div class="opt-hint">Lake Livingston go-to. Fishing / outdoor.</div>
+        <div class="opt-title">Fishing / Sun Shirt <span class="opt-tier" data-tier="pro">Pro</span></div>
+        <div class="opt-material">Lightweight polyester · UV-rated · long sleeves with hood</div>
+        <div class="opt-sku">SKU: Gildan G465</div>
       </button>
 
       <button class="opt" data-cat="headwear" data-value="Richardson 112 · Trucker Hat">
         <div class="opt-icon"><img src="/assets/img/garments/richardson-112.png" alt="Richardson 112 Trucker Hat" loading="lazy"></div>
         <div class="opt-title">Trucker Hat <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Richardson · 112</div>
-        <div class="opt-material">Cotton-poly front panel · nylon mesh back · structured 6-panel</div>
-        <div class="opt-hint">The hat everyone actually asks for.</div>
+        <div class="opt-material">Foam front panel · mesh back · structured 6-panel · the classic</div>
+        <div class="opt-sku">SKU: Richardson 112</div>
       </button>
       <button class="opt" data-cat="headwear" data-value="Richardson 115 · Low-Profile Trucker">
         <div class="opt-icon"><img src="/assets/img/garments/richardson-115.png" alt="Richardson 115 Low-Profile Trucker" loading="lazy"></div>
         <div class="opt-title">Low-Profile Trucker <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Richardson · 115</div>
-        <div class="opt-material">Cotton-poly front · mesh back · shorter crown, boutique fit</div>
-        <div class="opt-hint">Modern retail-shop look. Women's and men's.</div>
+        <div class="opt-material">Shorter crown · mesh back · modern retail fit</div>
+        <div class="opt-sku">SKU: Richardson 115</div>
       </button>
       <button class="opt" data-cat="headwear" data-value="Adams AD969 · Dad Hat">
         <div class="opt-icon"><img src="/assets/img/garments/adams-ad969-dad-hat.png" alt="Adams AD969 Dad Hat" loading="lazy"></div>
         <div class="opt-title">Dad Hat <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-brand">Adams · AD969 (or similar)</div>
-        <div class="opt-material">100% brushed cotton twill · unstructured, low-profile · buckle back</div>
-        <div class="opt-hint">Casual, soft, broken-in feel from day one.</div>
+        <div class="opt-material">Soft brushed cotton twill · unstructured · buckle back</div>
+        <div class="opt-sku">SKU: Adams AD969</div>
       </button>
       <button class="opt" data-cat="headwear" data-value="Yupoong 6089M · Snapback">
         <div class="opt-icon"><img src="/assets/img/garments/yupoong-6089-snapback.png" alt="Yupoong 6089M Snapback" loading="lazy"></div>
         <div class="opt-title">Snapback <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Yupoong · 6089M (or similar)</div>
-        <div class="opt-material">80/20 acrylic-wool · structured 6-panel · flat brim · plastic snapback</div>
-        <div class="opt-hint">Streetwear silhouette. Great DTF backdrop.</div>
+        <div class="opt-material">Structured 6-panel · flat brim · streetwear look</div>
+        <div class="opt-sku">SKU: Yupoong 6089M</div>
       </button>
       <button class="opt" data-cat="headwear" data-value="Flexfit 6277 · Flexfit Fitted Cap">
         <div class="opt-icon"><img src="/assets/img/garments/flexfit-6277.png" alt="Flexfit 6277 Fitted Cap" loading="lazy"></div>
-        <div class="opt-title">Flexfit Fitted Cap <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-brand">Flexfit · 6277</div>
-        <div class="opt-material">63/34/3 cotton-poly-spandex · structured 6-panel · stretch band, no closure</div>
-        <div class="opt-hint">Athletic fit. Popular for teams and coaches.</div>
+        <div class="opt-title">Fitted Cap <span class="opt-tier" data-tier="premium">Premium</span></div>
+        <div class="opt-material">Stretch-fit athletic cap · no closure · popular with teams and coaches</div>
+        <div class="opt-sku">SKU: Flexfit 6277</div>
       </button>
       <button class="opt" data-cat="headwear" data-value="Yupoong 1501KC · Cuffed Beanie">
         <div class="opt-icon"><img src="/assets/img/garments/yupoong-1501-beanie.png" alt="Yupoong 1501KC Cuffed Beanie" loading="lazy"></div>
         <div class="opt-title">Cuffed Beanie <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-brand">Yupoong · 1501KC (or similar)</div>
-        <div class="opt-material">100% acrylic knit · double-layer cuff · one-size-fits-most</div>
-        <div class="opt-hint">Winter and work-crew standby.</div>
+        <div class="opt-material">Knit acrylic · double-layer folded cuff · winter/work standby</div>
+        <div class="opt-sku">SKU: Yupoong 1501KC</div>
       </button>
     </div>
     <div class="step-nav" style="margin-top:24px;">
