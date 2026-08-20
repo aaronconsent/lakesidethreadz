@@ -88,7 +88,9 @@
     .opt-icon { width:100%; height:140px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border-radius:8px; padding:8px; }
     .opt-icon img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
     .opt-title { font-weight:700; font-size:15px; color:var(--ink); display:flex; align-items:center; gap:8px; padding-right:24px; }
-    .opt-material { font-size:13px; color:var(--ink); font-weight:600; margin-top:8px; padding:8px 10px; background:var(--surface-alt); border-radius:6px; border-left:3px solid var(--lit-blue); line-height:1.45; }
+    .opt-material { font-size:12.5px; color:var(--ink); margin-top:8px; padding:10px 12px; background:var(--surface-alt); border-radius:6px; border-left:3px solid var(--lit-blue); line-height:1.5; }
+    .opt-material > div { margin:2px 0; }
+    .opt-material b { color:var(--lit-blue); font-weight:700; }
     .opt-sku { font-size:10px; color:var(--muted); font-weight:500; margin-top:8px; letter-spacing:.02em; text-transform:uppercase; }
     .opt-tier { display:inline-flex; align-items:center; font-size:9px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; padding:2px 7px; border-radius:4px; background:var(--tier-basic-soft); color:var(--tier-basic); }
     .opt-tier[data-tier="premium"] { background:var(--tier-premium-soft); color:var(--tier-premium); }
@@ -295,19 +297,19 @@
       <button class="opt" data-cat="shirts"      data-value="Bella+Canvas 3001 · Premium Jersey Tee">
         <div class="opt-icon"><img src="/assets/img/garments/bella-3001.png" alt="Bella + Canvas 3001 Premium Jersey Tee" loading="lazy"></div>
         <div class="opt-title">Classic Tee <span class="opt-tier" data-tier="premium">Premium</span></div>
-        <div class="opt-material">Soft ringspun cotton · lightweight · smooth for prints</div>
+        <div class="opt-material"><div><b>Material:</b> 100% cotton</div><div><b>Feel:</b> Soft, breathable, everyday-weight</div><div><b>Construction:</b> Jersey knit</div><div><b>Best for:</b> DTF, screen printing, and everyday casual wear</div></div>
         <div class="opt-sku">SKU: Bella+Canvas 3001</div>
       </button>
       <button class="opt" data-cat="shirts"      data-value="Gildan 5000 · Heavy Cotton Tee">
         <div class="opt-icon"><img src="/assets/img/garments/gildan-5000.png" alt="Gildan 5000 Heavy Cotton Tee" loading="lazy"></div>
         <div class="opt-title">Heavy Cotton Tee <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-material">Sturdy 100% cotton · workwear weight · long-lasting</div>
+        <div class="opt-material"><div><b>Material:</b> 100% cotton (jersey knit)</div><div><b>Feel:</b> More substantial than a lightweight tee, still comfortable</div><div><b>Fit:</b> Classic / standard</div><div><b>Best for:</b> DTF, screen printing, embroidery, and everyday workwear</div></div>
         <div class="opt-sku">SKU: Gildan 5000</div>
       </button>
       <button class="opt" data-cat="shirts"      data-value="Gildan 64000 · Softstyle Tee">
         <div class="opt-icon"><img src="/assets/img/garments/gildan-64000.png" alt="Gildan 64000 Softstyle Tee" loading="lazy"></div>
         <div class="opt-title">Softstyle Tee <span class="opt-tier" data-tier="basic">Basic</span></div>
-        <div class="opt-material">Soft ringspun cotton · lighter than the Heavy Cotton · comfortable</div>
+        <div class="opt-material"><div><b>Material:</b> 100% ring-spun cotton</div><div><b>Feel:</b> Softer and smoother than the Heavy Cotton</div><div><b>Fit:</b> Modern retail-style</div><div><b>Best for:</b> DTF, screen printing, and everyday casual wear</div><div><b>Note:</b> Some colors may contain polyester blends</div></div>
         <div class="opt-sku">SKU: Gildan 64000</div>
       </button>
       <button class="opt" data-cat="shirts"      data-value="Champion T525C · Champion Tee">
@@ -351,13 +353,13 @@
       <button class="opt" data-cat="performance" data-value="Core 365 88181 · Performance Polo">
         <div class="opt-icon"><img src="/assets/img/garments/core365-88181.png" alt="Core 365 88181 Performance Polo" loading="lazy"></div>
         <div class="opt-title">Performance Polo <span class="opt-tier" data-tier="pro">Pro</span></div>
-        <div class="opt-material">Moisture-wicking polyester · UV-protective · business favorite</div>
+        <div class="opt-material"><div><b>Material:</b> 100% polyester (moisture-wicking)</div><div><b>Feel:</b> Lightweight, smooth, athletic</div><div><b>Features:</b> Quick-drying, breathable, moisture-wicking</div><div><b>Best for:</b> Work shirts, sports teams, gyms, outdoor crews, hot Texas weather</div><div><b>Printing:</b> Excellent for DTF (low-temp polyester process recommended)</div></div>
         <div class="opt-sku">SKU: Core 365 88181</div>
       </button>
       <button class="opt" data-cat="performance" data-value="Gildan G465 · Performance Hooded Tee">
         <div class="opt-icon"><img src="/assets/img/garments/gildan-g465.png" alt="Gildan G465 Performance Hooded Tee" loading="lazy"></div>
         <div class="opt-title">Fishing / Sun Shirt <span class="opt-tier" data-tier="pro">Pro</span></div>
-        <div class="opt-material">Lightweight polyester · UV-rated · long sleeves with hood</div>
+        <div class="opt-material"><div><b>Material:</b> 100% polyester</div><div><b>Feel:</b> Smooth, lightweight, cool, breathable</div><div><b>Features:</b> Moisture-wicking, quick-drying, UPF 30–50+ sun protection</div><div><b>Fit:</b> Relaxed / athletic</div><div><b>Best for:</b> Fishing, boating, hunting, construction, landscaping, lake-life apparel</div><div><b>Printing:</b> Great for DTF (low-temp application recommended)</div></div>
         <div class="opt-sku">SKU: Gildan G465</div>
       </button>
 
