@@ -43,9 +43,9 @@
     .prod { max-width:1200px; margin:0 auto; padding:.6rem 1.25rem 1.25rem; display:grid; grid-template-columns:1fr; gap:1.25rem; }
     @media (min-width:900px) { .prod { grid-template-columns:1fr 1fr; gap:2rem; padding-top:.9rem; } }
 
-    /* Gallery — cap main image to a viewport-fraction so it doesn't
-       eat the fold on tall screens. */
-    .gallery-main { aspect-ratio:1/1; max-height:calc(78vh - 180px); background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border-radius:12px; display:grid; place-items:center; padding:1rem; border:1px solid var(--hairline); box-shadow:0 3px 10px rgba(15,20,40,.05); }
+    /* Gallery — landscape main image so hero stays compact + info column
+       has room to align its CTA to the bottom of the gallery + thumbnail row. */
+    .gallery-main { aspect-ratio:4/3; max-height:calc(78vh - 240px); background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border-radius:12px; display:grid; place-items:center; padding:1rem; border:1px solid var(--hairline); box-shadow:0 3px 10px rgba(15,20,40,.05); }
     .gallery-main img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
     .gallery-thumbs { display:grid; grid-template-columns:repeat(4,1fr); gap:.45rem; margin-top:.55rem; }
     .thumb { aspect-ratio:1/1; background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border:2px solid var(--hairline); border-radius:7px; cursor:pointer; padding:.3rem; display:grid; place-items:center; transition:border-color .15s; overflow:hidden; }
@@ -53,8 +53,10 @@
     .thumb.active { border-color:var(--lit-blue); }
     .thumb:hover { border-color:var(--lit-blue); }
 
-    /* Info column */
+    /* Info column — on desktop, use flex-column + push CTA block to bottom
+       so the Get-Your-Quote button lines up with the bottom of the thumbnail row. */
     .info { padding-top:.15rem; }
+    @media (min-width:900px) { .info { display:flex; flex-direction:column; height:100%; } .info .cta-primary { margin-top:auto; } }
     .info .tier { display:inline-block; font-size:9px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; padding:2px 7px; border-radius:4px; background:var(--tier-premium-soft); color:var(--tier-premium); margin-bottom:.55rem; }
     .info h1 { font-family:'Bebas Neue', sans-serif; font-weight:400; font-size:clamp(1.8rem, 3.75vw, 2.55rem); line-height:1.02; letter-spacing:.01em; margin:0 0 .3rem; color:var(--ink); }
     .info .subline { font-size:.9rem; color:var(--ink-soft); margin:0 0 .55rem; line-height:1.45; }
