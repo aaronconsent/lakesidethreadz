@@ -93,6 +93,25 @@
     .faq details[open] summary { color:var(--lit-blue); }
     .faq details p { margin:.65rem 0 0; color:var(--ink-soft); line-height:1.65; font-size:.98rem; }
 
+    /* School picker (test) — six local high-school mockups, geo-auto-selected */
+    .schools { max-width:1200px; margin:0 auto; padding:1.75rem 1.25rem 0; }
+    .schools-head { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:.75rem; margin-bottom:1rem; padding-bottom:.65rem; border-bottom:1px solid var(--hairline); }
+    .schools-head h2 { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:1.65rem; letter-spacing:.01em; margin:0; color:var(--lit-blue); }
+    .schools-head .detected { font-size:.85rem; color:var(--ink-soft); }
+    .schools-head .detected b { color:var(--lit-blue); }
+    .schools-note { font-size:11px; color:var(--muted); line-height:1.55; margin:.4rem 0 1rem; padding:.65rem .85rem; background:var(--surface-alt); border-left:3px solid var(--lit-orange); border-radius:6px; }
+    .schools-note b { color:var(--ink); }
+    .school-tiles { display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem; }
+    @media (min-width:640px) { .school-tiles { grid-template-columns:repeat(3,1fr); } }
+    @media (min-width:900px) { .school-tiles { grid-template-columns:repeat(6,1fr); } }
+    .school-tile { position:relative; background:linear-gradient(180deg,#FBFBF7 0%,#F3F1EA 100%); border:2px solid var(--hairline); border-radius:10px; cursor:pointer; padding:.5rem .5rem .55rem; text-align:center; transition:border-color .15s, transform .1s; overflow:hidden; }
+    .school-tile:hover { border-color:var(--lit-blue); transform:translateY(-1px); }
+    .school-tile.active { border-color:var(--lit-blue); box-shadow:0 4px 12px rgba(0,30,120,.15); }
+    .school-tile img { width:100%; aspect-ratio:1/1; object-fit:contain; border-radius:6px; }
+    .school-tile .name { display:block; font-size:11.5px; font-weight:800; color:var(--ink); margin-top:.35rem; line-height:1.2; }
+    .school-tile .perm { display:block; font-size:9px; color:var(--lit-orange); font-weight:700; letter-spacing:.05em; text-transform:uppercase; margin-top:.15rem; }
+    .school-tile.active::before { content:"✓ Closest to you"; position:absolute; top:6px; right:6px; background:var(--lit-blue); color:#fff; font-size:9px; font-weight:800; letter-spacing:.03em; padding:2px 6px; border-radius:4px; }
+
     /* Bottom CTA banner */
     .bottom-cta { background:linear-gradient(135deg, var(--lit-blue) 0%, var(--lit-blue-2) 100%); color:#fff; padding:2.5rem 1.25rem; text-align:center; margin-top:2rem; }
     .bottom-cta h2 { font-family:'Bebas Neue', sans-serif; font-weight:400; font-size:2rem; letter-spacing:.01em; margin:0 0 .5rem; color:#fff; }
@@ -174,6 +193,47 @@
     <a class="cta-primary" href="/quote/?product=richardson-112">Get Your Quote &rarr;</a>
     <a class="cta-secondary" href="tel:+13469885449">Or call/text Kristen: (346) 988-5449</a>
     <p class="trust"><b>Kristen writes every quote by hand.</b> No account required. Usually same day, always within one business day.</p>
+  </div>
+</section>
+
+<!-- SCHOOL PICKER TEST — geo-select closest local high school, click to preview -->
+<section class="schools" id="school-picker">
+  <div class="schools-head">
+    <h2>See it in your team's colors</h2>
+    <p class="detected">Auto-showing: <b id="school-detected">Livingston Lions</b> &nbsp;·&nbsp; <a href="#" id="school-clear">not your school? pick one</a></p>
+  </div>
+  <p class="schools-note"><b>Preview art only.</b> These mockups use generic mascot silhouettes in team colors — not the district's licensed logos. Real production hats use the school's actual mark, which requires <b>written permission from the school</b> before we print. Kristen handles that request when you order.</p>
+  <div class="school-tiles" role="listbox" aria-label="Local high school mockups">
+    <button class="school-tile" data-slug="richardson-112-livingston-lions" data-name="Livingston Lions" data-city="Livingston" data-lat="30.7105" data-lng="-94.9330">
+      <img src="/assets/img/garments/richardson-112-livingston-lions.png" alt="Livingston Lions — mockup preview">
+      <span class="name">Livingston Lions</span>
+      <span class="perm">Permission required</span>
+    </button>
+    <button class="school-tile" data-slug="richardson-112-huntsville-hornets" data-name="Huntsville Hornets" data-city="Huntsville" data-lat="30.7235" data-lng="-95.5508">
+      <img src="/assets/img/garments/richardson-112-huntsville-hornets.png" alt="Huntsville Hornets — mockup preview">
+      <span class="name">Huntsville Hornets</span>
+      <span class="perm">Permission required</span>
+    </button>
+    <button class="school-tile" data-slug="richardson-112-coldspring-trojans" data-name="Coldspring Trojans" data-city="Coldspring" data-lat="30.5924" data-lng="-95.1288">
+      <img src="/assets/img/garments/richardson-112-coldspring-trojans.png" alt="Coldspring Trojans — mockup preview">
+      <span class="name">Coldspring Trojans</span>
+      <span class="perm">Permission required</span>
+    </button>
+    <button class="school-tile" data-slug="richardson-112-onalaska-wildcats" data-name="Onalaska Wildcats" data-city="Onalaska" data-lat="30.8066" data-lng="-95.1155">
+      <img src="/assets/img/garments/richardson-112-onalaska-wildcats.png" alt="Onalaska Wildcats — mockup preview">
+      <span class="name">Onalaska Wildcats</span>
+      <span class="perm">Permission required</span>
+    </button>
+    <button class="school-tile" data-slug="richardson-112-shepherd-pirates" data-name="Shepherd Pirates" data-city="Shepherd" data-lat="30.4952" data-lng="-94.9955">
+      <img src="/assets/img/garments/richardson-112-shepherd-pirates.png" alt="Shepherd Pirates — mockup preview">
+      <span class="name">Shepherd Pirates</span>
+      <span class="perm">Permission required</span>
+    </button>
+    <button class="school-tile" data-slug="richardson-112-cleveland" data-name="Cleveland HS" data-city="Cleveland" data-lat="30.3410" data-lng="-95.0855">
+      <img src="/assets/img/garments/richardson-112-cleveland.png" alt="Cleveland HS — mockup preview">
+      <span class="name">Cleveland HS</span>
+      <span class="perm">Permission required</span>
+    </button>
   </div>
 </section>
 
@@ -274,6 +334,71 @@
       heroImg.alt = 'Richardson 112 Trucker Hat — ' + btn.dataset.alt;
     });
   });
+
+  // School picker: geo-auto-select closest school + click to preview.
+  // On click we swap the hero image AND clear the angle-thumb active state so
+  // the user visibly sees "your school's mockup is now the main image."
+  const detectedEl = document.getElementById('school-detected');
+  const schoolTiles = Array.from(document.querySelectorAll('.school-tile'));
+
+  function pickSchool(tile, source) {
+    schoolTiles.forEach(t => t.classList.remove('active'));
+    tile.classList.add('active');
+    detectedEl.textContent = tile.dataset.name + (source === 'manual' ? ' (your pick)' : '');
+    // Swap main hero to this school's mockup; clear angle-thumbs so it's clear
+    // this is a variant preview, not the plain product.
+    heroImg.src = '/assets/img/garments/' + tile.dataset.slug + '.png';
+    heroImg.alt = tile.dataset.name + ' — Richardson 112 mockup preview (generic art, permission required for real logo)';
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  }
+
+  schoolTiles.forEach(t => t.addEventListener('click', () => pickSchool(t, 'manual')));
+
+  // Angle-thumb click also clears the school-picker active state.
+  document.querySelectorAll('.thumb').forEach(t => t.addEventListener('click', () => {
+    schoolTiles.forEach(s => s.classList.remove('active'));
+  }));
+
+  document.getElementById('school-clear').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('school-picker').scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+
+  // Haversine great-circle distance (miles) between two lat/lng pairs.
+  function distMiles(lat1, lng1, lat2, lng2) {
+    const R = 3958.8, toRad = x => x * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+
+  // Fetch edge-detected geo, pick closest school. Fallback: Livingston default.
+  (async () => {
+    let picked = schoolTiles[0]; // default: Livingston (already marked active in CSS? no — pick here)
+    try {
+      const r = await fetch('/api/geo', { cache:'no-store' });
+      if (r.ok) {
+        const geo = await r.json();
+        // Direct city-name match wins (case-insensitive), otherwise nearest by lat/lng.
+        if (geo.city) {
+          const match = schoolTiles.find(t => t.dataset.city.toLowerCase() === geo.city.toLowerCase());
+          if (match) picked = match;
+        }
+        if (picked === schoolTiles[0] && geo.latitude && geo.longitude) {
+          const lat = parseFloat(geo.latitude), lng = parseFloat(geo.longitude);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            let best = schoolTiles[0], bestD = Infinity;
+            for (const t of schoolTiles) {
+              const d = distMiles(lat, lng, parseFloat(t.dataset.lat), parseFloat(t.dataset.lng));
+              if (d < bestD) { bestD = d; best = t; }
+            }
+            picked = best;
+          }
+        }
+      }
+    } catch (_) { /* offline / worker failure → stick with default */ }
+    pickSchool(picked, 'auto');
+  })();
 </script>
 </body>
 </html>

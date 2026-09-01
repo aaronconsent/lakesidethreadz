@@ -63,6 +63,20 @@ export default {
       return new Response(null, { status: 301, headers: { Location: redirTarget } });
     }
 
+    // Edge geo lookup for the school-picker test on /shop/trucker-hat/.
+    // Returns visitor's Cloudflare-detected city/region — no client permission
+    // prompt required (unlike navigator.geolocation).
+    if (path === "/api/geo" && request.method === "GET") {
+      const cf = request.cf || {};
+      return json({
+        city: cf.city || null,
+        region: cf.region || null,
+        country: cf.country || null,
+        latitude: cf.latitude || null,
+        longitude: cf.longitude || null,
+      }, 200);
+    }
+
     if (SIMPLE_ENDPOINTS.has(path)) {
       if (request.method === "GET") return json({ ok: true, endpoint: path }, 200);
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
