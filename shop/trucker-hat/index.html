@@ -7,26 +7,30 @@
   <title>Trucker Hat · Richardson 112 · Lakeside Ink &amp; Threadz</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Nunito:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Nunito:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <style>
     :root {
       --lit-blue:#001E78; --lit-blue-2:#0033AA;
       --lit-orange:#F09600; --lit-flame:#F05A3C; --lit-pink:#E10078;
-      --ink:#1A1F35; --ink-soft:#4A5169; --muted:#8A8FA0;
+      --ink:#0F1428; --ink-soft:#3F4560; --muted:#8A8FA0;
       --ground:#FAFAF7; --surface:#FFFFFF; --surface-alt:#F3F1EA;
       --hairline:#E4E1D7; --brand-soft:#EEF0FA;
       --tier-premium:#001E78; --tier-premium-soft:#EEF0FA;
     }
     * { box-sizing: border-box; }
-    body { font-family:'Nunito', system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--ground); margin:0; -webkit-font-smoothing:antialiased; }
+    html { scroll-behavior:smooth; }
+    html, body { margin:0; padding:0; }
+    body { font-family:'Nunito', system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--ground); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+    #school-picker { scroll-margin-top:80px; }
     a { color: var(--lit-blue); }
+    img { max-width:100%; display:block; }
 
     /* NAV */
     .lit-nav { position:sticky; top:0; z-index:40; background:rgba(255,255,255,.96); backdrop-filter:blur(8px); border-bottom:1px solid #eef0f6; }
-    .lit-nav-inner { max-width:1200px; margin:0 auto; padding:.9rem 1.25rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .lit-nav-inner { max-width:1240px; margin:0 auto; padding:.9rem 1.25rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
     .lit-brand { display:flex; align-items:center; gap:.65rem; text-decoration:none; color:var(--lit-blue); font-weight:800; font-size:1.05rem; }
-    .lit-brand img { height:34px; width:auto; display:block; }
+    .lit-brand img { height:34px; width:auto; }
     .lit-links { display:none; gap:1.4rem; align-items:center; }
     .lit-links a { color:#111827; text-decoration:none; font-weight:600; font-size:.95rem; }
     .lit-links a:hover { color:var(--lit-blue); }
@@ -34,54 +38,130 @@
     @media (min-width:900px) { .lit-links { display:flex; } }
 
     /* Breadcrumb */
-    .crumbs { max-width:1200px; margin:0 auto; padding:.6rem 1.25rem 0; font-size:11px; color:var(--muted); letter-spacing:.02em; }
+    .crumbs { max-width:1240px; margin:0 auto; padding:1rem 1.25rem 0; font-size:12px; color:var(--muted); letter-spacing:.02em; }
     .crumbs a { color:var(--muted); text-decoration:none; }
     .crumbs a:hover { color:var(--lit-blue); }
 
-    /* Product hero grid — sized so on most 800-900px viewports the whole
-       thing (nav + crumb + gallery + info + primary CTA) fits above the fold. */
-    .prod { max-width:1200px; margin:0 auto; padding:.6rem 1.25rem 1.25rem; display:grid; grid-template-columns:1fr; gap:1.25rem; }
-    @media (min-width:900px) { .prod { grid-template-columns:1fr 1fr; gap:2rem; padding-top:.9rem; } }
+    /* ========== HERO / PRODUCT PAGE ========== */
+    .prod { max-width:1240px; margin:0 auto; padding:1rem 1.25rem 2rem; display:grid; grid-template-columns:1fr; gap:1.75rem; }
+    @media (min-width:900px)  { .prod { grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:2.5rem; padding-top:1.25rem; } }
+    @media (min-width:1100px) { .prod { grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:3rem; } }
 
-    /* Gallery — landscape main image so hero stays compact + info column
-       has room to align its CTA to the bottom of the gallery + thumbnail row. */
-    .gallery-main { aspect-ratio:3/2; max-height:calc(78vh - 240px); background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border-radius:12px; display:grid; place-items:center; padding:.5rem; border:1px solid var(--hairline); box-shadow:0 3px 10px rgba(15,20,40,.05); }
-    .gallery-main img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
-    .gallery-thumbs { display:grid; grid-template-columns:repeat(4,1fr); gap:.45rem; margin-top:.55rem; }
-    .thumb { aspect-ratio:1/1; background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border:2px solid var(--hairline); border-radius:7px; cursor:pointer; padding:.3rem; display:grid; place-items:center; transition:border-color .15s; overflow:hidden; }
-    .thumb img { max-width:100%; max-height:100%; object-fit:contain; }
-    .thumb.active { border-color:var(--lit-blue); }
+    /* Gallery column */
+    .gallery { display:flex; flex-direction:column; gap:.75rem; }
+    .gallery-main {
+      position:relative;
+      aspect-ratio:3/2;
+      width:100%;
+      background:linear-gradient(180deg,#FFFFFF 0%,#F5F3EC 100%);
+      border-radius:14px;
+      border:1px solid var(--hairline);
+      box-shadow:0 12px 40px -18px rgba(15,20,40,.18), 0 4px 12px rgba(15,20,40,.04);
+      overflow:hidden;
+    }
+    .gallery-main img { width:100%; height:100%; object-fit:contain; padding:1rem; }
+    .gallery-tag {
+      position:absolute; top:14px; left:14px;
+      display:inline-flex; align-items:center; gap:6px;
+      background:rgba(0,30,120,.94); color:#fff;
+      font-size:11px; font-weight:800; letter-spacing:.04em; text-transform:uppercase;
+      padding:6px 11px; border-radius:999px;
+      box-shadow:0 4px 12px rgba(0,30,120,.25);
+      backdrop-filter:blur(6px);
+    }
+    .gallery-tag::before { content:""; width:6px; height:6px; border-radius:50%; background:#4ADE80; box-shadow:0 0 0 3px rgba(74,222,128,.25); }
+    .gallery-thumbs { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; }
+    .thumb {
+      position:relative;
+      aspect-ratio:3/2;
+      background:linear-gradient(180deg,#FFFFFF 0%,#F5F3EC 100%);
+      border:2px solid var(--hairline);
+      border-radius:9px;
+      cursor:pointer;
+      overflow:hidden;
+      transition:border-color .15s, transform .1s;
+      padding:0;
+    }
+    .thumb img { width:100%; height:100%; object-fit:contain; padding:.4rem .4rem .9rem; }
     .thumb:hover { border-color:var(--lit-blue); }
+    .thumb.active { border-color:var(--lit-blue); box-shadow:0 6px 14px -6px rgba(0,30,120,.25); }
+    .thumb .thumb-label {
+      position:absolute; bottom:0; left:0; right:0;
+      font-size:9px; font-weight:800; letter-spacing:.05em; text-transform:uppercase;
+      color:var(--ink-soft); background:linear-gradient(180deg, transparent 0%, rgba(255,255,255,.95) 55%);
+      padding:14px 4px 4px; text-align:center;
+    }
+    .thumb.active .thumb-label { color:var(--lit-blue); }
 
-    /* Info column — on desktop, use flex-column + push CTA block to bottom
-       so the Get-Your-Quote button lines up with the bottom of the thumbnail row. */
-    .info { padding-top:.15rem; }
-    @media (min-width:900px) { .info { display:flex; flex-direction:column; height:100%; } .info .cta-primary { margin-top:auto; } }
-    .info .tier { display:inline-block; font-size:9px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; padding:2px 7px; border-radius:4px; background:var(--tier-premium-soft); color:var(--tier-premium); margin-bottom:.55rem; }
-    .info h1 { font-family:'Bebas Neue', sans-serif; font-weight:400; font-size:clamp(1.8rem, 3.75vw, 2.55rem); line-height:1.02; letter-spacing:.01em; margin:0 0 .3rem; color:var(--ink); }
-    .info .subline { font-size:.9rem; color:var(--ink-soft); margin:0 0 .55rem; line-height:1.45; }
-    .info .brand-note { font-size:10.5px; color:var(--muted); font-weight:600; letter-spacing:.03em; text-transform:uppercase; margin-bottom:.85rem; }
-    .info .price { font-size:1.05rem; color:var(--lit-blue); font-weight:800; margin-bottom:.85rem; }
-    .specs { background:var(--surface-alt); border-left:3px solid var(--lit-blue); border-radius:6px; padding:9px 12px; margin-bottom:.9rem; font-size:12px; line-height:1.5; }
-    .specs div { margin:1px 0; }
-    .specs b { color:var(--lit-blue); font-weight:700; }
-    .cta-primary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; background:linear-gradient(90deg,var(--lit-orange),var(--lit-flame) 55%,var(--lit-pink)); color:#fff; border:none; padding:12px 22px; font:inherit; font-weight:800; font-size:14.5px; border-radius:999px; cursor:pointer; box-shadow:0 6px 16px -5px rgba(240,150,0,.55); transition:transform .1s, box-shadow .15s; letter-spacing:.02em; text-decoration:none; width:100%; text-align:center; }
-    .cta-primary:hover { transform:translateY(-1px); box-shadow:0 10px 22px -5px rgba(240,90,60,.6); }
-    .cta-secondary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; margin-top:.45rem; width:100%; background:transparent; color:var(--lit-blue); border:1.5px solid var(--hairline); padding:10px 18px; font:inherit; font-weight:700; font-size:13px; border-radius:999px; cursor:pointer; text-decoration:none; text-align:center; transition:border-color .15s; }
+    /* Info column */
+    .info { padding-top:.15rem; display:flex; flex-direction:column; }
+    .info .tier { display:inline-flex; align-items:center; gap:5px; align-self:flex-start; font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; padding:4px 10px; border-radius:5px; background:var(--tier-premium-soft); color:var(--tier-premium); margin-bottom:.75rem; }
+    .info .tier::before { content:""; width:5px; height:5px; border-radius:50%; background:var(--lit-blue); }
+    .info h1 { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:clamp(2.1rem,4.2vw,3rem); line-height:1; letter-spacing:.005em; margin:0 0 .4rem; color:var(--ink); }
+    .info .subline { font-size:1rem; color:var(--ink-soft); margin:0 0 .5rem; line-height:1.5; }
+    .info .brand-note { font-size:11px; color:var(--muted); font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:1.15rem; }
+
+    .price-row { display:flex; align-items:baseline; gap:.75rem; margin-bottom:1.1rem; padding-bottom:1.1rem; border-bottom:1px solid var(--hairline); }
+    .price-row .price { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:1.55rem; color:var(--lit-blue); letter-spacing:.015em; }
+    .price-row .price-note { font-size:12px; color:var(--muted); }
+
+    .specs { background:var(--surface-alt); border-left:4px solid var(--lit-blue); border-radius:8px; padding:12px 15px; margin-bottom:1.2rem; font-size:12.5px; line-height:1.6; }
+    .specs div { margin:2px 0; }
+    .specs b { color:var(--lit-blue); font-weight:800; text-transform:uppercase; letter-spacing:.03em; font-size:10.5px; margin-right:4px; }
+
+    .school-inline { display:flex; align-items:center; gap:.6rem; padding:9px 12px; background:#fff; border:1px solid var(--hairline); border-radius:10px; margin-bottom:1.1rem; font-size:12.5px; }
+    .school-inline .swatch { width:26px; height:26px; border-radius:50%; background:var(--lit-blue); box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--hairline); flex:0 0 26px; }
+    .school-inline .txt { line-height:1.35; flex:1; }
+    .school-inline .txt b { color:var(--ink); font-weight:800; display:block; }
+    .school-inline .txt small { color:var(--muted); font-size:11px; }
+    .school-inline .change { font-size:11px; font-weight:800; color:var(--lit-blue); text-decoration:none; letter-spacing:.03em; text-transform:uppercase; }
+    .school-inline .change:hover { text-decoration:underline; }
+
+    .cta-primary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; background:linear-gradient(90deg,var(--lit-orange),var(--lit-flame) 55%,var(--lit-pink)); color:#fff; border:none; padding:15px 24px; font:inherit; font-weight:800; font-size:15px; border-radius:999px; cursor:pointer; box-shadow:0 8px 22px -6px rgba(240,150,0,.55); transition:transform .1s, box-shadow .15s; letter-spacing:.02em; text-decoration:none; width:100%; text-align:center; }
+    .cta-primary:hover { transform:translateY(-1px); box-shadow:0 12px 28px -6px rgba(240,90,60,.6); }
+    .cta-secondary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; margin-top:.55rem; width:100%; background:transparent; color:var(--lit-blue); border:1.5px solid var(--hairline); padding:11px 20px; font:inherit; font-weight:700; font-size:13.5px; border-radius:999px; cursor:pointer; text-decoration:none; text-align:center; transition:border-color .15s; }
     .cta-secondary:hover { border-color:var(--lit-blue); }
-    .trust { font-size:11px; color:var(--ink-soft); margin-top:.55rem; text-align:center; line-height:1.5; }
-    .trust b { color:var(--lit-blue); }
+    .trust { font-size:12px; color:var(--ink-soft); margin-top:.7rem; text-align:center; line-height:1.55; }
+    .trust b { color:var(--lit-blue); font-weight:800; }
 
-    /* Full description + best-for + FAQ */
-    .prose { max-width:900px; margin:0 auto; padding:2rem 1.25rem; }
-    .prose h2 { font-family:'Bebas Neue', sans-serif; font-weight:400; font-size:1.9rem; line-height:1.1; letter-spacing:.01em; color:var(--lit-blue); margin:2rem 0 .85rem; }
+    /* ========== SCHOOL PICKER SECTION ========== */
+    .schools { background:linear-gradient(180deg, #FFFFFF 0%, var(--surface-alt) 100%); border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline); }
+    .schools-inner { max-width:1240px; margin:0 auto; padding:2.5rem 1.25rem 2.75rem; }
+    .schools-head { display:grid; gap:.4rem; margin-bottom:1.5rem; }
+    @media (min-width:800px) { .schools-head { grid-template-columns:1fr auto; align-items:end; gap:1rem; } }
+    .schools-head h2 { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:clamp(1.7rem,3vw,2.2rem); letter-spacing:.005em; margin:0; color:var(--ink); line-height:1.05; }
+    .schools-head p { margin:.2rem 0 0; font-size:.95rem; color:var(--ink-soft); line-height:1.5; max-width:540px; }
+    .schools-head .detected-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; background:var(--brand-soft); color:var(--lit-blue); font-size:11.5px; font-weight:800; letter-spacing:.03em; border-radius:999px; text-transform:uppercase; }
+    .schools-head .detected-pill::before { content:""; width:6px; height:6px; background:var(--lit-blue); border-radius:50%; }
+
+    .school-tiles { display:grid; grid-template-columns:repeat(2,1fr); gap:.7rem; }
+    @media (min-width:600px)  { .school-tiles { grid-template-columns:repeat(3,1fr); } }
+    @media (min-width:1000px) { .school-tiles { grid-template-columns:repeat(6,1fr); gap:.9rem; } }
+
+    .school-tile { position:relative; background:#fff; border:2px solid var(--hairline); border-radius:12px; cursor:pointer; padding:0; text-align:center; overflow:hidden; transition:border-color .15s, transform .1s, box-shadow .2s; display:flex; flex-direction:column; }
+    .school-tile:hover { border-color:var(--lit-blue); transform:translateY(-2px); box-shadow:0 10px 22px -12px rgba(0,30,120,.35); }
+    .school-tile .school-img { aspect-ratio:3/2; background:linear-gradient(180deg,#F9F7F1 0%,#EFECE3 100%); display:grid; place-items:center; overflow:hidden; }
+    .school-tile .school-img img { width:100%; height:100%; object-fit:contain; padding:.4rem; }
+    .school-tile .school-info { padding:.55rem .6rem .7rem; }
+    .school-tile .name { display:block; font-size:12px; font-weight:800; color:var(--ink); line-height:1.2; }
+    .school-tile .perm { display:block; font-size:9px; color:var(--lit-orange); font-weight:800; letter-spacing:.05em; text-transform:uppercase; margin-top:.25rem; }
+    .school-tile.active { border-color:var(--lit-blue); box-shadow:0 12px 26px -10px rgba(0,30,120,.35); }
+    .school-tile.active::before { content:"✓"; position:absolute; top:8px; right:8px; z-index:2; width:22px; height:22px; background:var(--lit-blue); color:#fff; font-size:12px; font-weight:800; border-radius:50%; display:grid; place-items:center; box-shadow:0 3px 8px rgba(0,30,120,.35); }
+    .school-tile.geo-picked::after { content:"Closest to you"; position:absolute; top:8px; left:8px; z-index:2; background:#0F1428; color:#fff; font-size:9px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; padding:3px 7px; border-radius:4px; }
+
+    .schools-legal { margin-top:1.25rem; padding:.85rem 1rem; background:rgba(240,150,0,.09); border-left:3px solid var(--lit-orange); border-radius:6px; font-size:12px; line-height:1.6; color:var(--ink-soft); }
+    .schools-legal b { color:var(--ink); font-weight:800; }
+
+    /* ========== PROSE / FAQ ========== */
+    .prose { max-width:920px; margin:0 auto; padding:2.5rem 1.25rem; }
+    .prose h2 { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:2rem; line-height:1.1; letter-spacing:.005em; color:var(--lit-blue); margin:2.25rem 0 .85rem; }
     .prose h2:first-child { margin-top:0; }
     .prose p { font-size:1.05rem; line-height:1.75; margin:0 0 1.1rem; color:var(--ink); }
     .prose p strong { color:var(--ink); font-weight:800; }
 
-    .use-grid { display:grid; grid-template-columns:1fr; gap:.85rem; margin:1.25rem 0 .5rem; }
+    .use-grid { display:grid; grid-template-columns:1fr; gap:.9rem; margin:1.25rem 0 .5rem; }
     @media (min-width:640px) { .use-grid { grid-template-columns:1fr 1fr; } }
-    .use { background:var(--surface); border:1px solid var(--hairline); border-radius:12px; padding:1rem 1.15rem; }
+    .use { background:var(--surface); border:1px solid var(--hairline); border-radius:12px; padding:1.1rem 1.25rem; }
     .use h3 { font-size:1rem; font-weight:800; color:var(--lit-blue); margin:0 0 .35rem; }
     .use p { font-size:.9rem; margin:0; color:var(--ink-soft); line-height:1.55; }
 
@@ -93,39 +173,20 @@
     .faq details[open] summary { color:var(--lit-blue); }
     .faq details p { margin:.65rem 0 0; color:var(--ink-soft); line-height:1.65; font-size:.98rem; }
 
-    /* School picker (test) — six local high-school mockups, geo-auto-selected */
-    .schools { max-width:1200px; margin:0 auto; padding:1.75rem 1.25rem 0; }
-    .schools-head { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:.75rem; margin-bottom:1rem; padding-bottom:.65rem; border-bottom:1px solid var(--hairline); }
-    .schools-head h2 { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:1.65rem; letter-spacing:.01em; margin:0; color:var(--lit-blue); }
-    .schools-head .detected { font-size:.85rem; color:var(--ink-soft); }
-    .schools-head .detected b { color:var(--lit-blue); }
-    .schools-note { font-size:11px; color:var(--muted); line-height:1.55; margin:.4rem 0 1rem; padding:.65rem .85rem; background:var(--surface-alt); border-left:3px solid var(--lit-orange); border-radius:6px; }
-    .schools-note b { color:var(--ink); }
-    .school-tiles { display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem; }
-    @media (min-width:640px) { .school-tiles { grid-template-columns:repeat(3,1fr); } }
-    @media (min-width:900px) { .school-tiles { grid-template-columns:repeat(6,1fr); } }
-    .school-tile { position:relative; background:linear-gradient(180deg,#FBFBF7 0%,#F3F1EA 100%); border:2px solid var(--hairline); border-radius:10px; cursor:pointer; padding:.5rem .5rem .55rem; text-align:center; transition:border-color .15s, transform .1s; overflow:hidden; }
-    .school-tile:hover { border-color:var(--lit-blue); transform:translateY(-1px); }
-    .school-tile.active { border-color:var(--lit-blue); box-shadow:0 4px 12px rgba(0,30,120,.15); }
-    .school-tile img { width:100%; aspect-ratio:3/2; object-fit:contain; border-radius:6px; }
-    .school-tile .name { display:block; font-size:11.5px; font-weight:800; color:var(--ink); margin-top:.35rem; line-height:1.2; }
-    .school-tile .perm { display:block; font-size:9px; color:var(--lit-orange); font-weight:700; letter-spacing:.05em; text-transform:uppercase; margin-top:.15rem; }
-    .school-tile.active::before { content:"✓ Closest to you"; position:absolute; top:6px; right:6px; background:var(--lit-blue); color:#fff; font-size:9px; font-weight:800; letter-spacing:.03em; padding:2px 6px; border-radius:4px; }
-
     /* Bottom CTA banner */
-    .bottom-cta { background:linear-gradient(135deg, var(--lit-blue) 0%, var(--lit-blue-2) 100%); color:#fff; padding:2.5rem 1.25rem; text-align:center; margin-top:2rem; }
-    .bottom-cta h2 { font-family:'Bebas Neue', sans-serif; font-weight:400; font-size:2rem; letter-spacing:.01em; margin:0 0 .5rem; color:#fff; }
-    .bottom-cta p { color:rgba(255,255,255,.85); max-width:520px; margin:0 auto 1.25rem; font-size:1rem; }
+    .bottom-cta { background:linear-gradient(135deg,var(--lit-blue) 0%,var(--lit-blue-2) 100%); color:#fff; padding:3rem 1.25rem; text-align:center; margin-top:0; }
+    .bottom-cta h2 { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:2.15rem; letter-spacing:.005em; margin:0 0 .55rem; color:#fff; }
+    .bottom-cta p { color:rgba(255,255,255,.85); max-width:540px; margin:0 auto 1.4rem; font-size:1rem; line-height:1.5; }
     .bottom-cta .cta-primary { max-width:340px; margin:0 auto; }
 
     /* Footer */
-    .lit-footer { background:#0b1220; color:rgba(255,255,255,.82); padding:2.5rem 1.25rem 2rem; margin-top:2rem; }
-    .lit-footer-inner { max-width:1152px; margin:0 auto; display:grid; gap:1.5rem; grid-template-columns:1fr; }
+    .lit-footer { background:#0b1220; color:rgba(255,255,255,.82); padding:2.75rem 1.25rem 2rem; margin-top:0; }
+    .lit-footer-inner { max-width:1192px; margin:0 auto; display:grid; gap:1.5rem; grid-template-columns:1fr; }
     @media (min-width:800px) { .lit-footer-inner { grid-template-columns:1.3fr 1fr 1fr; } }
     .lit-footer h4 { color:#fff; font-weight:800; font-size:.95rem; margin:0 0 .6rem; letter-spacing:.03em; text-transform:uppercase; }
     .lit-footer a { color:rgba(255,255,255,.82); text-decoration:none; display:block; margin:.25rem 0; }
     .lit-footer a:hover { color:#fff; }
-    .lit-footer-bottom { max-width:1152px; margin:2rem auto 0; padding-top:1.25rem; border-top:1px solid rgba(255,255,255,.08); color:rgba(255,255,255,.55); font-size:.85rem; text-align:center; }
+    .lit-footer-bottom { max-width:1192px; margin:2rem auto 0; padding-top:1.25rem; border-top:1px solid rgba(255,255,255,.08); color:rgba(255,255,255,.55); font-size:.85rem; text-align:center; }
   </style>
 </head>
 <body>
@@ -151,55 +212,65 @@
   <a href="/">Home</a> &nbsp;·&nbsp; <a href="/services/embroidered-hats-caps/">Hats &amp; Caps</a> &nbsp;·&nbsp; <span>Trucker Hat</span>
 </nav>
 
+<!-- ========== PRODUCT HERO ========== -->
 <section class="prod">
-  <!-- Left: Gallery -->
-  <div>
+  <!-- Left: gallery -->
+  <div class="gallery">
     <div class="gallery-main">
-      <img id="hero-img" src="/assets/img/garments/richardson-112.png" alt="Richardson 112 Trucker Hat — front view" loading="eager">
+      <span class="gallery-tag" id="gallery-tag">Showing: Livingston Lions</span>
+      <img id="hero-img" src="/assets/img/garments/richardson-112-livingston-lions-hero.png" alt="Richardson 112 trucker hat — Livingston Lions mockup" loading="eager">
     </div>
-    <div class="gallery-thumbs">
-      <button class="thumb active" data-src="/assets/img/garments/richardson-112.png" data-alt="three-quarter hero view" aria-label="Three-quarter hero">
-        <img src="/assets/img/garments/richardson-112.png" alt="" loading="lazy">
+    <div class="gallery-thumbs" role="tablist" aria-label="Product photo angles">
+      <button class="thumb active" data-shot="hero" role="tab" aria-selected="true" aria-label="Three-quarter hero">
+        <img id="thumb-hero" src="/assets/img/garments/richardson-112-livingston-lions-hero.png" alt="">
+        <span class="thumb-label">Hero</span>
       </button>
-      <button class="thumb" data-src="/assets/img/garments/richardson-112-front.png" data-alt="front view" aria-label="Front view">
-        <img src="/assets/img/garments/richardson-112-front.png" alt="" loading="lazy">
+      <button class="thumb" data-shot="front" role="tab" aria-label="Front view">
+        <img id="thumb-front" src="/assets/img/garments/richardson-112-livingston-lions-front.png" alt="">
+        <span class="thumb-label">Front</span>
       </button>
-      <button class="thumb" data-src="/assets/img/garments/richardson-112-side.png" data-alt="side profile" aria-label="Side profile">
-        <img src="/assets/img/garments/richardson-112-side.png" alt="" loading="lazy">
+      <button class="thumb" data-shot="detail" role="tab" aria-label="Embroidery detail">
+        <img id="thumb-detail" src="/assets/img/garments/richardson-112-livingston-lions-detail.png" alt="">
+        <span class="thumb-label">Detail</span>
       </button>
-      <button class="thumb" data-src="/assets/img/garments/richardson-112-back.png" data-alt="back with snapback" aria-label="Back with snapback">
-        <img src="/assets/img/garments/richardson-112-back.png" alt="" loading="lazy">
+      <button class="thumb" data-shot="model" role="tab" aria-label="On-model fit">
+        <img id="thumb-model" src="/assets/img/garments/richardson-112-livingston-lions-model.png" alt="">
+        <span class="thumb-label">On&nbsp;Model</span>
       </button>
-      <button class="thumb" data-src="/assets/img/garments/richardson-112-detail.png" data-alt="stitching + mesh detail" aria-label="Stitching and mesh detail">
-        <img src="/assets/img/garments/richardson-112-detail.png" alt="" loading="lazy">
-      </button>
-      <button class="thumb" data-src="/assets/img/garments/richardson-112-model-male.png" data-alt="on model — male fit" aria-label="On-model fit (male)">
-        <img src="/assets/img/garments/richardson-112-model-male.png" alt="" loading="lazy">
-      </button>
-      <button class="thumb" data-src="/assets/img/garments/richardson-112-model-female.png" data-alt="on model — female fit" aria-label="On-model fit (female)">
-        <img src="/assets/img/garments/richardson-112-model-female.png" alt="" loading="lazy">
-      </button>
-      <button class="thumb" data-src="/assets/img/garments/richardson-112-lifestyle.png" data-alt="lifestyle — on the dock at Lake Livingston" aria-label="Lifestyle on the lake">
-        <img src="/assets/img/garments/richardson-112-lifestyle.png" alt="" loading="lazy">
+      <button class="thumb" data-shot="lifestyle" role="tab" aria-label="Lifestyle shot">
+        <img id="thumb-lifestyle" src="/assets/img/garments/richardson-112-livingston-lions-lifestyle.png" alt="">
+        <span class="thumb-label">Lifestyle</span>
       </button>
     </div>
   </div>
 
-  <!-- Right: Info -->
+  <!-- Right: info -->
   <div class="info">
-    <span class="tier">Premium · The Everyday Go-To</span>
+    <span class="tier">Premium · Everyday Go-To</span>
     <h1>Trucker Hat</h1>
-    <p class="subline">Structured snapback with a slight curved bill — the hat everyone actually asks for.</p>
-    <p class="brand-note">Richardson · Style 112 &nbsp;·&nbsp; 5 or 6 panel</p>
+    <p class="subline">Structured snapback with a slight curved bill &mdash; the hat everyone actually asks for.</p>
+    <p class="brand-note">Richardson &middot; Style 112 &nbsp;·&nbsp; 5 or 6 panel</p>
 
-    <div class="price">Real quote in one business day</div>
+    <div class="price-row">
+      <span class="price">Real quote in one business day</span>
+      <span class="price-note">Kristen writes every quote by hand.</span>
+    </div>
 
     <div class="specs">
-      <div><b>Material:</b> Cotton-poly front panel · nylon mesh back</div>
-      <div><b>Fit:</b> Structured 6-panel (5-panel available), curved brim</div>
-      <div><b>Closure:</b> Plastic snapback</div>
-      <div><b>Best for:</b> Embroidered logos, DTF prints, foam-front puff embroidery</div>
-      <div><b>Quantity:</b> No minimums — one piece or a hundred</div>
+      <div><b>Material</b> Cotton-poly front panel &middot; nylon mesh back</div>
+      <div><b>Fit</b> Structured 6-panel (5-panel available) &middot; curved brim</div>
+      <div><b>Closure</b> Plastic snapback &middot; adjustable one-size-fits-most</div>
+      <div><b>Decoration</b> Embroidered logos &middot; DTF prints &middot; foam-front puff</div>
+      <div><b>Quantity</b> No minimums &mdash; one piece or a hundred</div>
+    </div>
+
+    <div class="school-inline">
+      <div class="swatch" id="school-swatch" style="background:#001E78;"></div>
+      <div class="txt">
+        <b id="school-inline-name">Livingston Lions</b>
+        <small id="school-inline-note">Preview mockup &middot; permission required for real logo</small>
+      </div>
+      <a href="#school-picker" class="change">Change</a>
     </div>
 
     <a class="cta-primary" href="/quote/?product=richardson-112">Get Your Quote &rarr;</a>
@@ -208,56 +279,58 @@
   </div>
 </section>
 
-<!-- SCHOOL PICKER TEST — geo-select closest local high school, click to preview -->
+<!-- ========== SCHOOL PICKER ========== -->
 <section class="schools" id="school-picker">
-  <div class="schools-head">
-    <h2>See it in your team's colors</h2>
-    <p class="detected">Auto-showing: <b id="school-detected">Livingston Lions</b> &nbsp;·&nbsp; <a href="#" id="school-clear">not your school? pick one</a></p>
-  </div>
-  <p class="schools-note"><b>Preview art only.</b> These mockups use generic mascot silhouettes in team colors — not the district's licensed logos. Real production hats use the school's actual mark, which requires <b>written permission from the school</b> before we print. Kristen handles that request when you order.</p>
-  <div class="school-tiles" role="listbox" aria-label="Local high school mockups">
-    <button class="school-tile" data-slug="richardson-112-livingston-lions" data-name="Livingston Lions" data-city="Livingston" data-lat="30.7105" data-lng="-94.9330">
-      <img src="/assets/img/garments/richardson-112-livingston-lions.png" alt="Livingston Lions — mockup preview">
-      <span class="name">Livingston Lions</span>
-      <span class="perm">Permission required</span>
-    </button>
-    <button class="school-tile" data-slug="richardson-112-huntsville-hornets" data-name="Huntsville Hornets" data-city="Huntsville" data-lat="30.7235" data-lng="-95.5508">
-      <img src="/assets/img/garments/richardson-112-huntsville-hornets.png" alt="Huntsville Hornets — mockup preview">
-      <span class="name">Huntsville Hornets</span>
-      <span class="perm">Permission required</span>
-    </button>
-    <button class="school-tile" data-slug="richardson-112-coldspring-trojans" data-name="Coldspring Trojans" data-city="Coldspring" data-lat="30.5924" data-lng="-95.1288">
-      <img src="/assets/img/garments/richardson-112-coldspring-trojans.png" alt="Coldspring Trojans — mockup preview">
-      <span class="name">Coldspring Trojans</span>
-      <span class="perm">Permission required</span>
-    </button>
-    <button class="school-tile" data-slug="richardson-112-onalaska-wildcats" data-name="Onalaska Wildcats" data-city="Onalaska" data-lat="30.8066" data-lng="-95.1155">
-      <img src="/assets/img/garments/richardson-112-onalaska-wildcats.png" alt="Onalaska Wildcats — mockup preview">
-      <span class="name">Onalaska Wildcats</span>
-      <span class="perm">Permission required</span>
-    </button>
-    <button class="school-tile" data-slug="richardson-112-shepherd-pirates" data-name="Shepherd Pirates" data-city="Shepherd" data-lat="30.4952" data-lng="-94.9955">
-      <img src="/assets/img/garments/richardson-112-shepherd-pirates.png" alt="Shepherd Pirates — mockup preview">
-      <span class="name">Shepherd Pirates</span>
-      <span class="perm">Permission required</span>
-    </button>
-    <button class="school-tile" data-slug="richardson-112-cleveland" data-name="Cleveland HS" data-city="Cleveland" data-lat="30.3410" data-lng="-95.0855">
-      <img src="/assets/img/garments/richardson-112-cleveland.png" alt="Cleveland HS — mockup preview">
-      <span class="name">Cleveland HS</span>
-      <span class="perm">Permission required</span>
-    </button>
+  <div class="schools-inner">
+    <div class="schools-head">
+      <div>
+        <h2>See it in your team's colors</h2>
+        <p>We're showing the closest school to your location right now &mdash; pick another to preview it on this hat.</p>
+      </div>
+      <span class="detected-pill" id="detected-pill">Auto-detected: Livingston</span>
+    </div>
+
+    <div class="school-tiles" role="listbox" aria-label="Local high school mockups">
+      <button class="school-tile" data-slug="livingston-lions" data-name="Livingston Lions" data-city="Livingston" data-lat="30.7105" data-lng="-94.9330" data-color="#001E78">
+        <div class="school-img"><img src="/assets/img/garments/richardson-112-livingston-lions-hero.png" alt="Livingston Lions preview"></div>
+        <div class="school-info"><span class="name">Livingston Lions</span><span class="perm">Permission required</span></div>
+      </button>
+      <button class="school-tile" data-slug="huntsville-hornets" data-name="Huntsville Hornets" data-city="Huntsville" data-lat="30.7235" data-lng="-95.5508" data-color="#F97316">
+        <div class="school-img"><img src="/assets/img/garments/richardson-112-huntsville-hornets-hero.png" alt="Huntsville Hornets preview"></div>
+        <div class="school-info"><span class="name">Huntsville Hornets</span><span class="perm">Permission required</span></div>
+      </button>
+      <button class="school-tile" data-slug="coldspring-trojans" data-name="Coldspring Trojans" data-city="Coldspring" data-lat="30.5924" data-lng="-95.1288" data-color="#DC2626">
+        <div class="school-img"><img src="/assets/img/garments/richardson-112-coldspring-trojans-hero.png" alt="Coldspring Trojans preview"></div>
+        <div class="school-info"><span class="name">Coldspring Trojans</span><span class="perm">Permission required</span></div>
+      </button>
+      <button class="school-tile" data-slug="onalaska-wildcats" data-name="Onalaska Wildcats" data-city="Onalaska" data-lat="30.8066" data-lng="-95.1155" data-color="#B91C1C">
+        <div class="school-img"><img src="/assets/img/garments/richardson-112-onalaska-wildcats-hero.png" alt="Onalaska Wildcats preview"></div>
+        <div class="school-info"><span class="name">Onalaska Wildcats</span><span class="perm">Permission required</span></div>
+      </button>
+      <button class="school-tile" data-slug="shepherd-pirates" data-name="Shepherd Pirates" data-city="Shepherd" data-lat="30.4952" data-lng="-94.9955" data-color="#111827">
+        <div class="school-img"><img src="/assets/img/garments/richardson-112-shepherd-pirates-hero.png" alt="Shepherd Pirates preview"></div>
+        <div class="school-info"><span class="name">Shepherd Pirates</span><span class="perm">Permission required</span></div>
+      </button>
+      <button class="school-tile" data-slug="cleveland" data-name="Cleveland HS" data-city="Cleveland" data-lat="30.3410" data-lng="-95.0855" data-color="#001E78">
+        <div class="school-img"><img src="/assets/img/garments/richardson-112-cleveland-hero.png" alt="Cleveland HS preview"></div>
+        <div class="school-info"><span class="name">Cleveland HS</span><span class="perm">Permission required</span></div>
+      </button>
+    </div>
+
+    <p class="schools-legal"><b>Preview mockup art.</b> These images use generic mascot silhouettes in team-associated colors &mdash; not the districts' licensed logos. Real production hats use the school's actual mark, which requires written district permission. Kristen handles that request once you place your order.</p>
   </div>
 </section>
 
+<!-- ========== PROSE ========== -->
 <article class="prose">
   <h2>Why this hat is our most-asked-for</h2>
-  <p>The Richardson 112 is the trucker hat you've seen a thousand times without knowing the name. Cotton-poly front that takes an embroidered logo cleanly, plastic mesh back that keeps your head cool in a Texas summer, curved brim, snapback closure — it's the shape and fit most people picture when they say "trucker hat."</p>
+  <p>The Richardson 112 is the trucker hat you've seen a thousand times without knowing the name. Cotton-poly front that takes an embroidered logo cleanly, plastic mesh back that keeps your head cool in a Texas summer, curved brim, snapback closure &mdash; it's the shape and fit most people picture when they say "trucker hat."</p>
   <p>We stock it as the everyday go-to for business crews, sports teams, church staff, chamber events, family reunions, and lake weekends. A polo doesn't fit everyone, but this hat does.</p>
 
   <h2>What we decorate it with</h2>
-  <p><strong>Embroidered logos</strong> — the classic. Left front, ~2-3 inches wide, stitched directly onto the foam panel. Turnaround: 5–10 business days. Simple logos $15–20, more detailed $20–30, 3D puff embroidery (raised look) $25–35.</p>
-  <p><strong>DTF transfer</strong> — full-color prints on the front panel when you need photo-quality artwork the embroidery can't reproduce. Same panel, different technique.</p>
-  <p><strong>Sleeve/side detail</strong> — small logo or text on the side panel or brim. Nice for adding a phone number or website without cluttering the front.</p>
+  <p><strong>Embroidered logos</strong> &mdash; the classic. Left front, ~2-3 inches wide, stitched directly onto the foam panel. Turnaround: 5&ndash;10 business days. Simple logos $15&ndash;20, more detailed $20&ndash;30, 3D puff embroidery (raised look) $25&ndash;35.</p>
+  <p><strong>DTF transfer</strong> &mdash; full-color prints on the front panel when you need photo-quality artwork the embroidery can't reproduce. Same panel, different technique.</p>
+  <p><strong>Sleeve/side detail</strong> &mdash; small logo or text on the side panel or brim. Nice for adding a phone number or website without cluttering the front.</p>
 
   <h2>Best for</h2>
   <div class="use-grid">
@@ -271,7 +344,7 @@
     </div>
     <div class="use">
       <h3>Chambers &amp; events</h3>
-      <p>Golf tournaments, member gifts, fundraisers. Pairs well with a polo run — matching set for staff.</p>
+      <p>Golf tournaments, member gifts, fundraisers. Pairs well with a polo run &mdash; matching set for staff.</p>
     </div>
     <div class="use">
       <h3>Family &amp; lake days</h3>
@@ -283,30 +356,30 @@
   <div class="faq">
     <details>
       <summary>How much does one really cost?</summary>
-      <p>The blank hat is one part of the price; the decoration is the other. For a small logo left-front, expect the finished piece to land in a common range — Kristen will send an exact number based on your artwork and quantity. Bigger orders (12+, 24+) unlock better per-piece pricing.</p>
+      <p>The blank hat is one part of the price; the decoration is the other. For a small logo left-front, expect the finished piece to land in a common range &mdash; Kristen will send an exact number based on your artwork and quantity. Bigger orders (12+, 24+) unlock better per-piece pricing.</p>
     </details>
     <details>
       <summary>Can I get 3D puff embroidery?</summary>
-      <p>Yes. Puff adds a raised, dimensional look to bolder shapes — think block letters, mascots, simple icons. Not every logo works for puff (very thin lines or gradients don't translate). Kristen will flag it if your design won't puff cleanly and suggest a flat alternative.</p>
+      <p>Yes. Puff adds a raised, dimensional look to bolder shapes &mdash; think block letters, mascots, simple icons. Not every logo works for puff (very thin lines or gradients don't translate). Kristen will flag it if your design won't puff cleanly and suggest a flat alternative.</p>
     </details>
     <details>
       <summary>How long does an order take?</summary>
-      <p>Typical turnaround is 5–10 business days from proof approval. Rush turnaround is available for time-sensitive events — mention your deadline in the quote and Kristen will let you know what's possible.</p>
+      <p>Typical turnaround is 5&ndash;10 business days from proof approval. Rush turnaround is available for time-sensitive events &mdash; mention your deadline in the quote and Kristen will let you know what's possible.</p>
     </details>
     <details>
       <summary>What if I want a different color?</summary>
-      <p>Richardson 112 comes in a wide color range — solid crowns, two-tone (color front, black or grey back), and camo variants. Kristen will confirm color options when she writes your quote.</p>
+      <p>Richardson 112 comes in a wide color range &mdash; solid crowns, two-tone (color front, black or grey back), and camo variants. Kristen will confirm color options when she writes your quote.</p>
     </details>
     <details>
       <summary>Do you have a lower-profile version?</summary>
-      <p>Yes — the Richardson 115 is the low-profile version. Shorter crown, same shape otherwise. Popular for women's fit and boutique looks. Ask about it in the quote and Kristen will send both options.</p>
+      <p>Yes &mdash; the Richardson 115 is the low-profile version. Shorter crown, same shape otherwise. Popular for women's fit and boutique looks. Ask about it in the quote and Kristen will send both options.</p>
     </details>
   </div>
 </article>
 
 <section class="bottom-cta">
   <h2>Ready to see it with your logo?</h2>
-  <p>Six quick picks — garment, sizes, decoration, quantity. Kristen writes your real quote by hand, usually same day.</p>
+  <p>Six quick picks &mdash; garment, sizes, decoration, quantity. Kristen writes your real quote by hand, usually same day.</p>
   <a class="cta-primary" href="/quote/?product=richardson-112">Get Your Quote &rarr;</a>
 </section>
 
@@ -336,81 +409,99 @@
 </footer>
 
 <script>
-  // Gallery: click a thumb → swap main image + move active class
-  const heroImg = document.getElementById('hero-img');
-  document.querySelectorAll('.thumb').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      heroImg.src = btn.dataset.src;
-      heroImg.alt = 'Richardson 112 Trucker Hat — ' + btn.dataset.alt;
-    });
-  });
+(function () {
+  const SHOTS = ['hero', 'front', 'detail', 'model', 'lifestyle'];
+  const path = (slug, shot) => `/assets/img/garments/richardson-112-${slug}-${shot}.png`;
 
-  // School picker: geo-auto-select closest school + click to preview.
-  // On click we swap the hero image AND clear the angle-thumb active state so
-  // the user visibly sees "your school's mockup is now the main image."
-  const detectedEl = document.getElementById('school-detected');
-  const schoolTiles = Array.from(document.querySelectorAll('.school-tile'));
+  const heroImg   = document.getElementById('hero-img');
+  const galleryTag= document.getElementById('gallery-tag');
+  const inlineName= document.getElementById('school-inline-name');
+  const inlineNote= document.getElementById('school-inline-note');
+  const swatch    = document.getElementById('school-swatch');
+  const detectedPill = document.getElementById('detected-pill');
+  const thumbs    = Array.from(document.querySelectorAll('.thumb'));
+  const tiles     = Array.from(document.querySelectorAll('.school-tile'));
 
-  function pickSchool(tile, source) {
-    schoolTiles.forEach(t => t.classList.remove('active'));
+  let currentSchool = tiles[0];      // Livingston default
+  let currentShot   = 'hero';
+
+  function setSchool(tile, source) {
+    currentSchool = tile;
+    tiles.forEach(t => { t.classList.remove('active'); t.classList.remove('geo-picked'); });
     tile.classList.add('active');
-    detectedEl.textContent = tile.dataset.name + (source === 'manual' ? ' (your pick)' : '');
-    // Swap main hero to this school's mockup; clear angle-thumbs so it's clear
-    // this is a variant preview, not the plain product.
-    heroImg.src = '/assets/img/garments/' + tile.dataset.slug + '.png';
-    heroImg.alt = tile.dataset.name + ' — Richardson 112 mockup preview (generic art, permission required for real logo)';
-    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    if (source === 'auto') tile.classList.add('geo-picked');
+
+    // Swap main hero to current shot for this school
+    heroImg.src = path(tile.dataset.slug, currentShot);
+    heroImg.alt = `${tile.dataset.name} — Richardson 112 ${currentShot} mockup preview (generic art, permission required for real logo)`;
+
+    // Swap all 5 thumbnails to this school's shots
+    SHOTS.forEach(s => {
+      const t = document.getElementById('thumb-' + s);
+      if (t) t.src = path(tile.dataset.slug, s);
+    });
+
+    // Update gallery tag + inline info
+    galleryTag.textContent = `Showing: ${tile.dataset.name}`;
+    inlineName.textContent = tile.dataset.name;
+    inlineNote.textContent = source === 'auto'
+      ? 'Auto-detected · preview mockup · permission required for real logo'
+      : 'Preview mockup · permission required for real logo';
+    swatch.style.background = tile.dataset.color;
+    detectedPill.textContent = source === 'auto'
+      ? `Auto-detected: ${tile.dataset.city}`
+      : `Your pick: ${tile.dataset.name}`;
   }
 
-  schoolTiles.forEach(t => t.addEventListener('click', () => pickSchool(t, 'manual')));
-
-  // Angle-thumb click also clears the school-picker active state.
-  document.querySelectorAll('.thumb').forEach(t => t.addEventListener('click', () => {
-    schoolTiles.forEach(s => s.classList.remove('active'));
-  }));
-
-  document.getElementById('school-clear').addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('school-picker').scrollIntoView({ behavior:'smooth', block:'start' });
-  });
-
-  // Haversine great-circle distance (miles) between two lat/lng pairs.
-  function distMiles(lat1, lng1, lat2, lng2) {
-    const R = 3958.8, toRad = x => x * Math.PI / 180;
-    const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
-    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
-    return 2 * R * Math.asin(Math.sqrt(a));
+  function setShot(shot) {
+    currentShot = shot;
+    thumbs.forEach(t => {
+      t.classList.toggle('active', t.dataset.shot === shot);
+      t.setAttribute('aria-selected', t.dataset.shot === shot ? 'true' : 'false');
+    });
+    heroImg.src = path(currentSchool.dataset.slug, shot);
+    heroImg.alt = `${currentSchool.dataset.name} — Richardson 112 ${shot} mockup preview (generic art, permission required for real logo)`;
   }
 
-  // Fetch edge-detected geo, pick closest school. Fallback: Livingston default.
+  let userPicked = false;
+  thumbs.forEach(t => t.addEventListener('click', () => setShot(t.dataset.shot)));
+  tiles.forEach(t  => t.addEventListener('click', () => { userPicked = true; setSchool(t, 'manual'); }));
+
+  // Haversine (mi)
+  function distMi(a, b, c, d) {
+    const R = 3958.8, r = x => x * Math.PI / 180;
+    const dLat = r(c - a), dLng = r(d - b);
+    const h = Math.sin(dLat/2)**2 + Math.cos(r(a)) * Math.cos(r(c)) * Math.sin(dLng/2)**2;
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+
+  // Kick off with default rendered; then geo-detect and swap if a match is found.
   (async () => {
-    let picked = schoolTiles[0]; // default: Livingston (already marked active in CSS? no — pick here)
     try {
-      const r = await fetch('/api/geo', { cache:'no-store' });
-      if (r.ok) {
-        const geo = await r.json();
-        // Direct city-name match wins (case-insensitive), otherwise nearest by lat/lng.
-        if (geo.city) {
-          const match = schoolTiles.find(t => t.dataset.city.toLowerCase() === geo.city.toLowerCase());
-          if (match) picked = match;
-        }
-        if (picked === schoolTiles[0] && geo.latitude && geo.longitude) {
-          const lat = parseFloat(geo.latitude), lng = parseFloat(geo.longitude);
-          if (!isNaN(lat) && !isNaN(lng)) {
-            let best = schoolTiles[0], bestD = Infinity;
-            for (const t of schoolTiles) {
-              const d = distMiles(lat, lng, parseFloat(t.dataset.lat), parseFloat(t.dataset.lng));
-              if (d < bestD) { bestD = d; best = t; }
-            }
-            picked = best;
+      const r = await fetch('/api/geo', { cache: 'no-store' });
+      if (!r.ok || userPicked) return;
+      const geo = await r.json();
+      if (userPicked) return;
+      let match = null;
+      if (geo.city) {
+        match = tiles.find(t => t.dataset.city.toLowerCase() === String(geo.city).toLowerCase());
+      }
+      if (!match && geo.latitude && geo.longitude) {
+        const lat = parseFloat(geo.latitude), lng = parseFloat(geo.longitude);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          let best = null, bestD = Infinity;
+          for (const t of tiles) {
+            const d = distMi(lat, lng, parseFloat(t.dataset.lat), parseFloat(t.dataset.lng));
+            if (d < bestD) { bestD = d; best = t; }
           }
+          if (best) match = best;
         }
       }
-    } catch (_) { /* offline / worker failure → stick with default */ }
-    pickSchool(picked, 'auto');
+      if (match && match !== currentSchool) setSchool(match, 'auto');
+      else if (match) { match.classList.add('geo-picked'); detectedPill.textContent = `Auto-detected: ${match.dataset.city}`; }
+    } catch (_) { /* offline / worker miss → keep default */ }
   })();
+})();
 </script>
 </body>
 </html>
