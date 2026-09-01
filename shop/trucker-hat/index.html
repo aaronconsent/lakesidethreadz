@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Trucker Hat · Richardson 112 · Lakeside Ink &amp; Threadz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Nunito:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <style>
+    :root {
+      --lit-blue:#001E78; --lit-blue-2:#0033AA;
+      --lit-orange:#F09600; --lit-flame:#F05A3C; --lit-pink:#E10078;
+      --ink:#1A1F35; --ink-soft:#4A5169; --muted:#8A8FA0;
+      --ground:#FAFAF7; --surface:#FFFFFF; --surface-alt:#F3F1EA;
+      --hairline:#E4E1D7; --brand-soft:#EEF0FA;
+      --tier-premium:#001E78; --tier-premium-soft:#EEF0FA;
+    }
+    * { box-sizing: border-box; }
+    body { font-family:'Nunito', system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--ground); margin:0; -webkit-font-smoothing:antialiased; }
+    a { color: var(--lit-blue); }
+
+    /* NAV */
+    .lit-nav { position:sticky; top:0; z-index:40; background:rgba(255,255,255,.96); backdrop-filter:blur(8px); border-bottom:1px solid #eef0f6; }
+    .lit-nav-inner { max-width:1200px; margin:0 auto; padding:.9rem 1.25rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .lit-brand { display:flex; align-items:center; gap:.65rem; text-decoration:none; color:var(--lit-blue); font-weight:800; font-size:1.05rem; }
+    .lit-brand img { height:34px; width:auto; display:block; }
+    .lit-links { display:none; gap:1.4rem; align-items:center; }
+    .lit-links a { color:#111827; text-decoration:none; font-weight:600; font-size:.95rem; }
+    .lit-links a:hover { color:var(--lit-blue); }
+    .lit-cta-nav { background:linear-gradient(90deg,var(--lit-orange),var(--lit-flame) 55%,var(--lit-pink)); color:#fff !important; padding:.55rem 1rem; border-radius:.6rem; font-weight:700 !important; box-shadow:0 6px 14px rgba(240,90,60,.25); }
+    @media (min-width:900px) { .lit-links { display:flex; } }
+
+    /* Breadcrumb */
+    .crumbs { max-width:1200px; margin:0 auto; padding:1rem 1.25rem 0; font-size:12px; color:var(--muted); letter-spacing:.02em; }
+    .crumbs a { color:var(--muted); text-decoration:none; }
+    .crumbs a:hover { color:var(--lit-blue); }
+
+    /* Product hero grid */
+    .prod { max-width:1200px; margin:0 auto; padding:1rem 1.25rem 2rem; display:grid; grid-template-columns:1fr; gap:2rem; }
+    @media (min-width:900px) { .prod { grid-template-columns:1fr 1fr; gap:3rem; padding-top:1.5rem; } }
+
+    /* Gallery */
+    .gallery-main { aspect-ratio:1/1; background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border-radius:14px; display:grid; place-items:center; padding:1.5rem; border:1px solid var(--hairline); box-shadow:0 4px 12px rgba(15,20,40,.06); }
+    .gallery-main img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
+    .gallery-thumbs { display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; margin-top:.85rem; }
+    .thumb { aspect-ratio:1/1; background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border:2px solid var(--hairline); border-radius:8px; cursor:pointer; padding:.4rem; display:grid; place-items:center; transition:border-color .15s; overflow:hidden; }
+    .thumb img { max-width:100%; max-height:100%; object-fit:contain; }
+    .thumb.active { border-color:var(--lit-blue); }
+    .thumb:hover { border-color:var(--lit-blue); }
+
+    /* Info column */
+    .info { padding-top:.25rem; }
+    .info .tier { display:inline-block; font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; padding:3px 9px; border-radius:4px; background:var(--tier-premium-soft); color:var(--tier-premium); margin-bottom:1rem; }
+    .info h1 { font-family:'Bebas Neue', sans-serif; font-weight:400; font-size:clamp(2.4rem, 5vw, 3.4rem); line-height:1.02; letter-spacing:.01em; margin:0 0 .35rem; color:var(--ink); }
+    .info .subline { font-size:1.05rem; color:var(--ink-soft); margin:0 0 1.25rem; }
+    .info .brand-note { font-size:12px; color:var(--muted); font-weight:600; letter-spacing:.03em; text-transform:uppercase; margin-bottom:1.25rem; }
+    .info .price { font-size:1.35rem; color:var(--lit-blue); font-weight:800; margin-bottom:.35rem; }
+    .info .price-note { font-size:12px; color:var(--muted); margin-bottom:1.25rem; }
+    .specs { background:var(--surface-alt); border-left:3px solid var(--lit-blue); border-radius:6px; padding:14px 16px; margin-bottom:1.5rem; font-size:14px; line-height:1.55; }
+    .specs div { margin:2px 0; }
+    .specs b { color:var(--lit-blue); font-weight:700; }
+    .cta-primary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; background:linear-gradient(90deg,var(--lit-orange),var(--lit-flame) 55%,var(--lit-pink)); color:#fff; border:none; padding:16px 28px; font:inherit; font-weight:800; font-size:16px; border-radius:999px; cursor:pointer; box-shadow:0 8px 22px -6px rgba(240,150,0,.55); transition:transform .1s, box-shadow .15s; letter-spacing:.02em; text-decoration:none; width:100%; text-align:center; }
+    .cta-primary:hover { transform:translateY(-1px); box-shadow:0 12px 26px -6px rgba(240,90,60,.6); }
+    .cta-secondary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; margin-top:.65rem; width:100%; background:transparent; color:var(--lit-blue); border:1.5px solid var(--hairline); padding:14px 24px; font:inherit; font-weight:700; font-size:14px; border-radius:999px; cursor:pointer; text-decoration:none; text-align:center; transition:border-color .15s; }
+    .cta-secondary:hover { border-color:var(--lit-blue); }
+    .trust { font-size:12.5px; color:var(--ink-soft); margin-top:.9rem; text-align:center; line-height:1.55; }
+    .trust b { color:var(--lit-blue); }
+
+    /* Full description + best-for + FAQ */
+    .prose { max-width:900px; margin:0 auto; padding:2rem 1.25rem; }
+    .prose h2 { font-family:'Bebas Neue', sans-serif; font-weight:400; font-size:1.9rem; line-height:1.1; letter-spacing:.01em; color:var(--lit-blue); margin:2rem 0 .85rem; }
+    .prose h2:first-child { margin-top:0; }
+    .prose p { font-size:1.05rem; line-height:1.75; margin:0 0 1.1rem; color:var(--ink); }
+    .prose p strong { color:var(--ink); font-weight:800; }
+
+    .use-grid { display:grid; grid-template-columns:1fr; gap:.85rem; margin:1.25rem 0 .5rem; }
+    @media (min-width:640px) { .use-grid { grid-template-columns:1fr 1fr; } }
+    .use { background:var(--surface); border:1px solid var(--hairline); border-radius:12px; padding:1rem 1.15rem; }
+    .use h3 { font-size:1rem; font-weight:800; color:var(--lit-blue); margin:0 0 .35rem; }
+    .use p { font-size:.9rem; margin:0; color:var(--ink-soft); line-height:1.55; }
+
+    .faq details { border-bottom:1px solid var(--hairline); padding:1rem 0; }
+    .faq summary { font-weight:800; cursor:pointer; font-size:1.02rem; color:var(--ink); list-style:none; display:flex; justify-content:space-between; align-items:center; }
+    .faq summary::-webkit-details-marker { display:none; }
+    .faq summary::after { content:"+"; color:var(--lit-orange); font-size:1.5rem; line-height:1; font-weight:800; }
+    .faq details[open] summary::after { content:"−"; }
+    .faq details[open] summary { color:var(--lit-blue); }
+    .faq details p { margin:.65rem 0 0; color:var(--ink-soft); line-height:1.65; font-size:.98rem; }
+
+    /* Bottom CTA banner */
+    .bottom-cta { background:linear-gradient(135deg, var(--lit-blue) 0%, var(--lit-blue-2) 100%); color:#fff; padding:2.5rem 1.25rem; text-align:center; margin-top:2rem; }
+    .bottom-cta h2 { font-family:'Bebas Neue', sans-serif; font-weight:400; font-size:2rem; letter-spacing:.01em; margin:0 0 .5rem; color:#fff; }
+    .bottom-cta p { color:rgba(255,255,255,.85); max-width:520px; margin:0 auto 1.25rem; font-size:1rem; }
+    .bottom-cta .cta-primary { max-width:340px; margin:0 auto; }
+
+    /* Footer */
+    .lit-footer { background:#0b1220; color:rgba(255,255,255,.82); padding:2.5rem 1.25rem 2rem; margin-top:2rem; }
+    .lit-footer-inner { max-width:1152px; margin:0 auto; display:grid; gap:1.5rem; grid-template-columns:1fr; }
+    @media (min-width:800px) { .lit-footer-inner { grid-template-columns:1.3fr 1fr 1fr; } }
+    .lit-footer h4 { color:#fff; font-weight:800; font-size:.95rem; margin:0 0 .6rem; letter-spacing:.03em; text-transform:uppercase; }
+    .lit-footer a { color:rgba(255,255,255,.82); text-decoration:none; display:block; margin:.25rem 0; }
+    .lit-footer a:hover { color:#fff; }
+    .lit-footer-bottom { max-width:1152px; margin:2rem auto 0; padding-top:1.25rem; border-top:1px solid rgba(255,255,255,.08); color:rgba(255,255,255,.55); font-size:.85rem; text-align:center; }
+  </style>
+</head>
+<body>
+
+<header class="lit-nav">
+  <div class="lit-nav-inner">
+    <a href="/" class="lit-brand">
+      <img src="/assets/img/ChatGPT-Image-Apr-23-2026-01_50_45-PM.png" alt="Lakeside Ink &amp; Threadz"/>
+      <span>Lakeside Ink &amp; Threadz</span>
+    </a>
+    <nav class="lit-links" aria-label="Primary">
+      <a href="/services/">Services</a>
+      <a href="/gallery/">Gallery</a>
+      <a href="/business-orders/">Business Orders</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contact/">Contact</a>
+      <a href="/quote/" class="lit-cta-nav">Get a Quote</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="crumbs" aria-label="breadcrumb">
+  <a href="/">Home</a> &nbsp;·&nbsp; <a href="/services/embroidered-hats-caps/">Hats &amp; Caps</a> &nbsp;·&nbsp; <span>Trucker Hat</span>
+</nav>
+
+<section class="prod">
+  <!-- Left: Gallery -->
+  <div>
+    <div class="gallery-main">
+      <img id="hero-img" src="/assets/img/garments/richardson-112.png" alt="Richardson 112 Trucker Hat — front view" loading="eager">
+    </div>
+    <div class="gallery-thumbs">
+      <button class="thumb active" data-src="/assets/img/garments/richardson-112.png" data-alt="front view" aria-label="Front view">
+        <img src="/assets/img/garments/richardson-112.png" alt="" loading="lazy">
+      </button>
+      <button class="thumb" data-src="/assets/img/garments/richardson-112-side.png" data-alt="side profile" aria-label="Side profile">
+        <img src="/assets/img/garments/richardson-112-side.png" alt="" loading="lazy">
+      </button>
+      <button class="thumb" data-src="/assets/img/garments/richardson-112-back.png" data-alt="back with snapback" aria-label="Back with snapback">
+        <img src="/assets/img/garments/richardson-112-back.png" alt="" loading="lazy">
+      </button>
+      <button class="thumb" data-src="/assets/img/garments/richardson-112-detail.png" data-alt="fabric detail" aria-label="Fabric detail">
+        <img src="/assets/img/garments/richardson-112-detail.png" alt="" loading="lazy">
+      </button>
+    </div>
+  </div>
+
+  <!-- Right: Info -->
+  <div class="info">
+    <span class="tier">Premium · The Everyday Go-To</span>
+    <h1>Trucker Hat</h1>
+    <p class="subline">Structured snapback with a slight curved bill — the hat everyone actually asks for.</p>
+    <p class="brand-note">Richardson · Style 112 &nbsp;·&nbsp; 5 or 6 panel</p>
+
+    <div class="price">Real quote in one business day</div>
+    <p class="price-note">Pricing depends on decoration (DTF or embroidered), placement, and quantity. Kristen writes every quote by hand — usually same day.</p>
+
+    <div class="specs">
+      <div><b>Material:</b> Cotton-poly front panel · nylon mesh back</div>
+      <div><b>Fit:</b> Structured 6-panel (5-panel available), curved brim</div>
+      <div><b>Closure:</b> Plastic snapback</div>
+      <div><b>Best for:</b> Embroidered logos, DTF prints, foam-front puff embroidery</div>
+      <div><b>Quantity:</b> No minimums — one piece or a hundred</div>
+    </div>
+
+    <a class="cta-primary" href="/quote/?product=richardson-112">Get Your Quote &rarr;</a>
+    <a class="cta-secondary" href="tel:+13469885449">Or call/text Kristen: (346) 988-5449</a>
+    <p class="trust"><b>Kristen writes every quote by hand.</b> No account required. Usually same day, always within one business day.</p>
+  </div>
+</section>
+
+<article class="prose">
+  <h2>Why this hat is our most-asked-for</h2>
+  <p>The Richardson 112 is the trucker hat you've seen a thousand times without knowing the name. Cotton-poly front that takes an embroidered logo cleanly, plastic mesh back that keeps your head cool in a Texas summer, curved brim, snapback closure — it's the shape and fit most people picture when they say "trucker hat."</p>
+  <p>We stock it as the everyday go-to for business crews, sports teams, church staff, chamber events, family reunions, and lake weekends. A polo doesn't fit everyone, but this hat does.</p>
+
+  <h2>What we decorate it with</h2>
+  <p><strong>Embroidered logos</strong> — the classic. Left front, ~2-3 inches wide, stitched directly onto the foam panel. Turnaround: 5–10 business days. Simple logos $15–20, more detailed $20–30, 3D puff embroidery (raised look) $25–35.</p>
+  <p><strong>DTF transfer</strong> — full-color prints on the front panel when you need photo-quality artwork the embroidery can't reproduce. Same panel, different technique.</p>
+  <p><strong>Sleeve/side detail</strong> — small logo or text on the side panel or brim. Nice for adding a phone number or website without cluttering the front.</p>
+
+  <h2>Best for</h2>
+  <div class="use-grid">
+    <div class="use">
+      <h3>Business crews</h3>
+      <p>Contractors, landscapers, HVAC, plumbers. Structured shape holds up on the jobsite, mesh back means it's actually worn in the truck.</p>
+    </div>
+    <div class="use">
+      <h3>Sports teams &amp; coaches</h3>
+      <p>Sideline staff, boosters, tournament giveaways. Snapback closure fits any adult head, so no sizing headaches.</p>
+    </div>
+    <div class="use">
+      <h3>Chambers &amp; events</h3>
+      <p>Golf tournaments, member gifts, fundraisers. Pairs well with a polo run — matching set for staff.</p>
+    </div>
+    <div class="use">
+      <h3>Family &amp; lake days</h3>
+      <p>Reunions, wedding parties, birthday runs. A dozen matching truckers on the boat photographs great.</p>
+    </div>
+  </div>
+
+  <h2>Frequently asked</h2>
+  <div class="faq">
+    <details>
+      <summary>How much does one really cost?</summary>
+      <p>The blank hat is one part of the price; the decoration is the other. For a small logo left-front, expect the finished piece to land in a common range — Kristen will send an exact number based on your artwork and quantity. Bigger orders (12+, 24+) unlock better per-piece pricing.</p>
+    </details>
+    <details>
+      <summary>Can I get 3D puff embroidery?</summary>
+      <p>Yes. Puff adds a raised, dimensional look to bolder shapes — think block letters, mascots, simple icons. Not every logo works for puff (very thin lines or gradients don't translate). Kristen will flag it if your design won't puff cleanly and suggest a flat alternative.</p>
+    </details>
+    <details>
+      <summary>How long does an order take?</summary>
+      <p>Typical turnaround is 5–10 business days from proof approval. Rush turnaround is available for time-sensitive events — mention your deadline in the quote and Kristen will let you know what's possible.</p>
+    </details>
+    <details>
+      <summary>What if I want a different color?</summary>
+      <p>Richardson 112 comes in a wide color range — solid crowns, two-tone (color front, black or grey back), and camo variants. Kristen will confirm color options when she writes your quote.</p>
+    </details>
+    <details>
+      <summary>Do you have a lower-profile version?</summary>
+      <p>Yes — the Richardson 115 is the low-profile version. Shorter crown, same shape otherwise. Popular for women's fit and boutique looks. Ask about it in the quote and Kristen will send both options.</p>
+    </details>
+  </div>
+</article>
+
+<section class="bottom-cta">
+  <h2>Ready to see it with your logo?</h2>
+  <p>Six quick picks — garment, sizes, decoration, quantity. Kristen writes your real quote by hand, usually same day.</p>
+  <a class="cta-primary" href="/quote/?product=richardson-112">Get Your Quote &rarr;</a>
+</section>
+
+<footer class="lit-footer">
+  <div class="lit-footer-inner">
+    <div>
+      <h4>Lakeside Ink &amp; Threadz</h4>
+      <p style="margin:.25rem 0 .75rem;">Custom embroidery, DTF printing, and branded apparel &mdash; right here on Lake Livingston.</p>
+      <p style="margin:0;color:rgba(255,255,255,.7);">Twin Creeks Dr, Livingston, TX 77351</p>
+    </div>
+    <div>
+      <h4>Talk to us</h4>
+      <a href="tel:+13469885449">(346) 988-5449</a>
+      <a href="mailto:hello@lakesidethreadz.com">hello@lakesidethreadz.com</a>
+      <a href="/quote/">Get a quote &rarr;</a>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <a href="/services/">Services</a>
+      <a href="/gallery/">Gallery</a>
+      <a href="/business-orders/">Business Orders</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contact/">Contact</a>
+    </div>
+  </div>
+  <p class="lit-footer-bottom">&copy; Lakeside Ink &amp; Threadz &middot; Family-run on Lake Livingston</p>
+</footer>
+
+<script>
+  // Gallery: click a thumb → swap main image + move active class
+  const heroImg = document.getElementById('hero-img');
+  document.querySelectorAll('.thumb').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      heroImg.src = btn.dataset.src;
+      heroImg.alt = 'Richardson 112 Trucker Hat — ' + btn.dataset.alt;
+    });
+  });
+</script>
+</body>
+</html>

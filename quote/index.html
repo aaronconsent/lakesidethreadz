@@ -860,6 +860,46 @@ ${notes || '(none)'}`;
       submitBtn.disabled = false; submitBtn.textContent = 'Send my quote request';
     }
   });
+
+  // Deep-link support: ?product=<slug> from product pages (/shop/*)
+  // Pre-selects the matching category + garment and jumps to Step 2 so
+  // the customer sees their pick and just confirms.
+  const PRODUCT_LINKS = {
+    'richardson-112':      { category: 'headwear',    garmentPrefix: 'Richardson 112' },
+    'richardson-115':      { category: 'headwear',    garmentPrefix: 'Richardson 115' },
+    'adams-dad-hat':       { category: 'headwear',    garmentPrefix: 'Adams AD969' },
+    'yupoong-snapback':    { category: 'headwear',    garmentPrefix: 'Yupoong 6089M' },
+    'flexfit-fitted':      { category: 'headwear',    garmentPrefix: 'Flexfit 6277' },
+    'yupoong-beanie':      { category: 'headwear',    garmentPrefix: 'Yupoong 1501KC' },
+    'sportsman-ponytail':  { category: 'headwear',    garmentPrefix: 'Sportsman SP101' },
+    'bella-3001':          { category: 'shirts',      garmentPrefix: 'Bella+Canvas 3001' },
+    'gildan-5000':         { category: 'shirts',      garmentPrefix: 'Gildan 5000' },
+    'gildan-64000':        { category: 'shirts',      garmentPrefix: 'Gildan 64000' },
+    'champion-t525c':      { category: 'shirts',      garmentPrefix: 'Champion T525C' },
+    'gildan-18500':        { category: 'hoodies',     garmentPrefix: 'Gildan 18500' },
+    'bella-3719':          { category: 'hoodies',     garmentPrefix: 'Bella+Canvas 3719' },
+    'bella-4719':          { category: 'hoodies',     garmentPrefix: 'Bella+Canvas 4719' },
+    'gildan-18000':        { category: 'hoodies',     garmentPrefix: 'Gildan 18000' },
+    'bella-b7502':         { category: 'hoodies',     garmentPrefix: 'Bella+Canvas B7502' },
+    'core365-88181':       { category: 'performance', garmentPrefix: 'Core 365 88181' },
+    'gildan-g465':         { category: 'performance', garmentPrefix: 'Gildan G465' },
+  };
+  const slug = new URL(location.href).searchParams.get('product');
+  const link = slug ? PRODUCT_LINKS[slug] : null;
+  if (link) {
+    const catBtn = document.querySelector('.cat-tile[data-value="' + link.category + '"]');
+    if (catBtn) {
+      catBtn.click();
+      // Advance to Step 2 (triggers the category → garment filter)
+      document.getElementById('next-1').click();
+      // Now click the matching garment tile
+      requestAnimationFrame(() => {
+        document.querySelectorAll('.options[data-group="apparel"] .opt').forEach(btn => {
+          if (btn.dataset.value.startsWith(link.garmentPrefix)) btn.click();
+        });
+      });
+    }
+  }
 </script>
 </body>
 </html>
