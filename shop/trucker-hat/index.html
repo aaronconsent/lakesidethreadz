@@ -45,7 +45,7 @@
 
     /* Gallery — landscape main image so hero stays compact + info column
        has room to align its CTA to the bottom of the gallery + thumbnail row. */
-    .gallery-main { aspect-ratio:4/3; max-height:calc(78vh - 240px); background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border-radius:12px; display:grid; place-items:center; padding:1rem; border:1px solid var(--hairline); box-shadow:0 3px 10px rgba(15,20,40,.05); }
+    .gallery-main { aspect-ratio:3/2; max-height:calc(78vh - 240px); background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border-radius:12px; display:grid; place-items:center; padding:.5rem; border:1px solid var(--hairline); box-shadow:0 3px 10px rgba(15,20,40,.05); }
     .gallery-main img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
     .gallery-thumbs { display:grid; grid-template-columns:repeat(4,1fr); gap:.45rem; margin-top:.55rem; }
     .thumb { aspect-ratio:1/1; background:linear-gradient(180deg, #FBFBF7 0%, #F3F1EA 100%); border:2px solid var(--hairline); border-radius:7px; cursor:pointer; padding:.3rem; display:grid; place-items:center; transition:border-color .15s; overflow:hidden; }
@@ -107,7 +107,7 @@
     .school-tile { position:relative; background:linear-gradient(180deg,#FBFBF7 0%,#F3F1EA 100%); border:2px solid var(--hairline); border-radius:10px; cursor:pointer; padding:.5rem .5rem .55rem; text-align:center; transition:border-color .15s, transform .1s; overflow:hidden; }
     .school-tile:hover { border-color:var(--lit-blue); transform:translateY(-1px); }
     .school-tile.active { border-color:var(--lit-blue); box-shadow:0 4px 12px rgba(0,30,120,.15); }
-    .school-tile img { width:100%; aspect-ratio:1/1; object-fit:contain; border-radius:6px; }
+    .school-tile img { width:100%; aspect-ratio:3/2; object-fit:contain; border-radius:6px; }
     .school-tile .name { display:block; font-size:11.5px; font-weight:800; color:var(--ink); margin-top:.35rem; line-height:1.2; }
     .school-tile .perm { display:block; font-size:9px; color:var(--lit-orange); font-weight:700; letter-spacing:.05em; text-transform:uppercase; margin-top:.15rem; }
     .school-tile.active::before { content:"✓ Closest to you"; position:absolute; top:6px; right:6px; background:var(--lit-blue); color:#fff; font-size:9px; font-weight:800; letter-spacing:.03em; padding:2px 6px; border-radius:4px; }
